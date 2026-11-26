@@ -1,878 +1,858 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Helvetica Neue'; color: #000000}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 11.0px 'Helvetica Neue'; color: #000000; min-height: 12.0px}
-    span.s1 {font: 11.0px 'Apple Color Emoji'}
-    span.s2 {font: 11.0px 'PingFang SC'}
-    span.s3 {font: 11.0px 'Apple Symbols'}
-    span.s4 {font: 11.0px 'Lucida Grande'}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Учёт переработок — Дом Радио</title>
+<style>
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #f5f5f7; color: #1a1a1a; }
+header { background: #fff; padding: 14px 24px; border-bottom: 1px solid #e0e0e5; position: sticky; top: 0; z-index: 10; }
+h1 { margin: 0; font-size: 20px; }
+.toolbar { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; }
+.toolbar > div { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+button { padding: 6px 12px; border-radius: 6px; border: 1px solid #d0d0d5; background: #fff; cursor: pointer; font-size: 13px; font-family: inherit; }
+button:hover { background: #f0f0f5; }
+.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.month-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.month-tab { padding: 5px 12px; border: 1px solid #d0d0d5; background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.month-tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.container { display: grid; grid-template-columns: 300px 1fr; gap: 16px; padding: 16px 24px; align-items: start; }
+.event-list { background: #fff; border-radius: 10px; padding: 10px; max-height: calc(100vh - 180px); overflow-y: auto; position: sticky; top: 160px; }
+.event-item { padding: 8px 10px; border-radius: 6px; cursor: pointer; margin-bottom: 4px; border: 1px solid transparent; font-size: 13px; line-height: 1.4; }
+.event-item:hover { background: #f5f5f8; }
+.event-item.active { background: #e8f0ff; border-color: #3070e0; }
+.event-item.summary-item { background: #f7f7fa; border-color: #e0e0e5; font-weight: 600; margin-bottom: 8px; }
+.event-item.summary-item.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+.event-date { font-weight: 600; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.3px; }
+.event-item.active .event-date { color: #3070e0; }
+.event-item.summary-item.active .event-date { color: rgba(255,255,255,0.6); }
+.event-title { margin-top: 2px; }
+.main-panel { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.card { background: #fff; border-radius: 10px; padding: 18px; }
+.card h2 { margin: 0 0 6px; font-size: 18px; }
+.meta { color: #666; font-size: 13px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+th { background: #fafafa; font-weight: 600; font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.4px; }
+tfoot td { font-weight: 700; border-top: 2px solid #ddd; border-bottom: none; }
+input[type="number"] { width: 80px; padding: 6px 8px; border: 1px solid #d0d0d5; border-radius: 5px; font-size: 14px; font-family: inherit; }
+input[type="number"]:focus { outline: none; border-color: #3070e0; box-shadow: 0 0 0 3px rgba(48,112,224,0.15); }
+.role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background: #eef4ff; color: #2050b0; font-size: 11px; font-weight: 500; }
+.position-cell { color: #666; font-size: 12px; }
+.overtime { color: #d03030; font-weight: 600; }
+.empty { color: #999; padding: 32px; text-align: center; font-size: 14px; }
+.hint { color: #888; font-size: 12px; margin-bottom: 12px; }
+dialog { border: none; border-radius: 12px; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-width: 90vw; }
+dialog::backdrop { background: rgba(0,0,0,0.5); }
+.dialog-body { padding: 22px; min-width: 460px; max-height: 80vh; overflow-y: auto; }
+.dialog-body h3 { margin: 0 0 16px; font-size: 18px; }
+.form-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.form-row input { flex: 1; padding: 7px 10px; border: 1px solid #d0d0d5; border-radius: 5px; font-family: inherit; font-size: 14px; }
+.dialog-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+.employee-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+.employee-row .emp-name { font-weight: 500; }
+.employee-row .emp-pos { color: #666; font-size: 12px; }
+.employee-row button { padding: 3px 8px; font-size: 12px; color: #d03030; border-color: #f0c0c0; }
+.event-total-bar { margin-top: 14px; padding: 10px 14px; background: #f5f7ff; border-radius: 6px; font-size: 14px; display: flex; gap: 16px; flex-wrap: wrap; }
+.event-total-bar strong { color: #2050b0; }
+.status-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }
+.status-dot.online { background: #2ecc71; box-shadow: 0 0 0 3px rgba(46,204,113,0.2); }
+.status-dot.offline { background: #e74c3c; }
+.status-dot.local { background: #f39c12; }
+.online-count { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: #eef4ff; color: #2050b0; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.banner { background: #fff3cd; color: #856404; padding: 10px 16px; border-radius: 6px; margin: 0 24px 8px; font-size: 13px; display: none; }
+.banner.show { display: block; }
+</style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="ru"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1">&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;</p>
-<p class="p1">&lt;title&gt;Учёт переработок — Дом Радио&lt;/title&gt;</p>
-<p class="p1">&lt;style&gt;</p>
-<p class="p1">* { box-sizing: border-box; }</p>
-<p class="p1">body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; background: #f5f5f7; color: #1a1a1a; }</p>
-<p class="p1">header { background: #fff; padding: 14px 24px; border-bottom: 1px solid #e0e0e5; position: sticky; top: 0; z-index: 10; }</p>
-<p class="p1">h1 { margin: 0; font-size: 20px; }</p>
-<p class="p1">.toolbar { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; }</p>
-<p class="p1">.toolbar &gt; div { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }</p>
-<p class="p1">button { padding: 6px 12px; border-radius: 6px; border: 1px solid #d0d0d5; background: #fff; cursor: pointer; font-size: 13px; font-family: inherit; }</p>
-<p class="p1">button:hover { background: #f0f0f5; }</p>
-<p class="p1">.btn-primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }</p>
-<p class="p1">.month-tabs { display: flex; gap: 6px; flex-wrap: wrap; }</p>
-<p class="p1">.month-tab { padding: 5px 12px; border: 1px solid #d0d0d5; background: #fff; border-radius: 6px; cursor: pointer; font-size: 13px; }</p>
-<p class="p1">.month-tab.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }</p>
-<p class="p1">.container { display: grid; grid-template-columns: 300px 1fr; gap: 16px; padding: 16px 24px; align-items: start; }</p>
-<p class="p1">.event-list { background: #fff; border-radius: 10px; padding: 10px; max-height: calc(100vh - 180px); overflow-y: auto; position: sticky; top: 160px; }</p>
-<p class="p1">.event-item { padding: 8px 10px; border-radius: 6px; cursor: pointer; margin-bottom: 4px; border: 1px solid transparent; font-size: 13px; line-height: 1.4; }</p>
-<p class="p1">.event-item:hover { background: #f5f5f8; }</p>
-<p class="p1">.event-item.active { background: #e8f0ff; border-color: #3070e0; }</p>
-<p class="p1">.event-item.summary-item { background: #f7f7fa; border-color: #e0e0e5; font-weight: 600; margin-bottom: 8px; }</p>
-<p class="p1">.event-item.summary-item.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }</p>
-<p class="p1">.event-date { font-weight: 600; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.3px; }</p>
-<p class="p1">.event-item.active .event-date { color: #3070e0; }</p>
-<p class="p1">.event-item.summary-item.active .event-date { color: rgba(255,255,255,0.6); }</p>
-<p class="p1">.event-title { margin-top: 2px; }</p>
-<p class="p1">.main-panel { display: flex; flex-direction: column; gap: 16px; min-width: 0; }</p>
-<p class="p1">.card { background: #fff; border-radius: 10px; padding: 18px; }</p>
-<p class="p1">.card h2 { margin: 0 0 6px; font-size: 18px; }</p>
-<p class="p1">.meta { color: #666; font-size: 13px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; }</p>
-<p class="p1">table { width: 100%; border-collapse: collapse; }</p>
-<p class="p1">th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }</p>
-<p class="p1">th { background: #fafafa; font-weight: 600; font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 0.4px; }</p>
-<p class="p1">tfoot td { font-weight: 700; border-top: 2px solid #ddd; border-bottom: none; }</p>
-<p class="p1">input[type="number"] { width: 80px; padding: 6px 8px; border: 1px solid #d0d0d5; border-radius: 5px; font-size: 14px; font-family: inherit; }</p>
-<p class="p1">input[type="number"]:focus { outline: none; border-color: #3070e0; box-shadow: 0 0 0 3px rgba(48,112,224,0.15); }</p>
-<p class="p1">.role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; background: #eef4ff; color: #2050b0; font-size: 11px; font-weight: 500; }</p>
-<p class="p1">.position-cell { color: #666; font-size: 12px; }</p>
-<p class="p1">.overtime { color: #d03030; font-weight: 600; }</p>
-<p class="p1">.empty { color: #999; padding: 32px; text-align: center; font-size: 14px; }</p>
-<p class="p1">.hint { color: #888; font-size: 12px; margin-bottom: 12px; }</p>
-<p class="p1">dialog { border: none; border-radius: 12px; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-width: 90vw; }</p>
-<p class="p1">dialog::backdrop { background: rgba(0,0,0,0.5); }</p>
-<p class="p1">.dialog-body { padding: 22px; min-width: 460px; max-height: 80vh; overflow-y: auto; }</p>
-<p class="p1">.dialog-body h3 { margin: 0 0 16px; font-size: 18px; }</p>
-<p class="p1">.form-row { display: flex; gap: 8px; margin-bottom: 8px; }</p>
-<p class="p1">.form-row input { flex: 1; padding: 7px 10px; border: 1px solid #d0d0d5; border-radius: 5px; font-family: inherit; font-size: 14px; }</p>
-<p class="p1">.dialog-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }</p>
-<p class="p1">.employee-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid #eee; font-size: 14px; }</p>
-<p class="p1">.employee-row .emp-name { font-weight: 500; }</p>
-<p class="p1">.employee-row .emp-pos { color: #666; font-size: 12px; }</p>
-<p class="p1">.employee-row button { padding: 3px 8px; font-size: 12px; color: #d03030; border-color: #f0c0c0; }</p>
-<p class="p1">.event-total-bar { margin-top: 14px; padding: 10px 14px; background: #f5f7ff; border-radius: 6px; font-size: 14px; display: flex; gap: 16px; flex-wrap: wrap; }</p>
-<p class="p1">.event-total-bar strong { color: #2050b0; }</p>
-<p class="p1">.status-bar { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #666; }</p>
-<p class="p1">.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; }</p>
-<p class="p1">.status-dot.online { background: #2ecc71; box-shadow: 0 0 0 3px rgba(46,204,113,0.2); }</p>
-<p class="p1">.status-dot.offline { background: #e74c3c; }</p>
-<p class="p1">.status-dot.local { background: #f39c12; }</p>
-<p class="p1">.online-count { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: #eef4ff; color: #2050b0; border-radius: 12px; font-size: 12px; font-weight: 500; }</p>
-<p class="p1">.banner { background: #fff3cd; color: #856404; padding: 10px 16px; border-radius: 6px; margin: 0 24px 8px; font-size: 13px; display: none; }</p>
-<p class="p1">.banner.show { display: block; }</p>
-<p class="p1">&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;header&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="toolbar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;h1&gt;Учёт переработок&lt;/h1&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="status-bar"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span class="status-dot" id="statusDot"&gt;&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;span id="statusText"&gt;Подключение…&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="online-count" id="onlineCount" style="display:none;"&gt;<span class="s1">👥</span> &lt;span id="onlineNum"&gt;0&lt;/span&gt; онлайн&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="openEmployeeSettings()"&gt;<span class="s1">👥</span> Сотрудники&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="openEventDialog()"&gt;<span class="s2">＋</span> Мероприятие&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="exportCSV()"&gt;<span class="s3">⤓</span> CSV&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="showShareInfo()"&gt;<span class="s1">🔗</span> Поделиться&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="month-tabs" id="monthTabs"&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;/header&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="banner" id="localBanner"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span><span class="s1">⚠️</span> Firebase не настроен — работает локальный режим. Проверьте databaseURL в конфиге.</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;aside class="event-list" id="eventList"&gt;&lt;/aside&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="main-panel" id="mainPanel"&gt;&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;dialog id="employeeDialog"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="dialog-body"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;Сотрудники&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="employeeList"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row" style="margin-top:16px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="newEmployeeName" placeholder="Имя и фамилия"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="newEmployeePosition" placeholder="Должность"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="addEmployee()" class="btn-primary"&gt;Добавить&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="dialog-actions"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="document.getElementById('employeeDialog').close()"&gt;Закрыть&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/dialog&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;dialog id="eventDialog"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="dialog-body"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;Добавить мероприятие&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventDate" type="date"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventTitle" placeholder="Название"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventLocation" placeholder="Локация"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventProducer" placeholder="Продюсер"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventResponsible" placeholder="Ответственный за сетап"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventSound" placeholder="Звук"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventLight" placeholder="Свет"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventVideo" placeholder="Видео"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventDirection" placeholder="Проведение (помреж)"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row"&gt;&lt;input id="newEventBudget" placeholder="Код бюджета"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="dialog-actions"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="document.getElementById('eventDialog').close()"&gt;Отмена&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="addEvent()" class="btn-primary"&gt;Сохранить&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/dialog&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;dialog id="shareDialog"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="dialog-body"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;h3&gt;Поделиться таблицей&lt;/h3&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;p style="font-size:14px;color:#555;"&gt;Скопируйте ссылку и отправьте коллегам. Они смогут открыть и редактировать в реальном времени.&lt;/p&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="form-row" style="margin-top:16px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;input id="shareUrl" readonly&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="copyShareUrl()" class="btn-primary"&gt;Копировать&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="dialog-actions"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>&lt;button onclick="document.getElementById('shareDialog').close()"&gt;Закрыть&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/dialog&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"&gt;&lt;/script&gt;</p>
-<p class="p1">&lt;script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"&gt;&lt;/script&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1">// ============================================================</p>
-<p class="p1">// <span class="s1">🔧</span> НАСТРОЙКА FIREBASE — ваш конфиг</p>
-<p class="p1">// ============================================================</p>
-<p class="p1">const firebaseConfig = {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>apiKey: "AIzaSyDSCD46k_xoYZq_rx4JIhQnD_XpIILBy-8",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>authDomain: "dom-radio-overtime-dad2d.firebaseapp.com",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>databaseURL: "https://dom-radio-overtime-dad2d-default-rtdb.europe-west1.firebasedatabase.app",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>projectId: "dom-radio-overtime-dad2d",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>storageBucket: "dom-radio-overtime-dad2d.firebasestorage.app",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>messagingSenderId: "1037713153475",</p>
-<p class="p1"><span class="Apple-converted-space">  </span>appId: "1:1037713153475:web:a85efa17d42457d6c6b176"</p>
-<p class="p1">};</p>
-<p class="p1">// ============================================================</p>
-<p class="p2"><br></p>
-<p class="p1">const FIREBASE_READY = firebaseConfig.apiKey &amp;&amp; !firebaseConfig.apiKey.includes('ВСТАВЬТЕ');</p>
-<p class="p1">let db = null;</p>
-<p class="p1">let isOnline = false;</p>
-<p class="p1">let localMode = false;</p>
-<p class="p2"><br></p>
-<p class="p1">if (FIREBASE_READY) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>firebase.initializeApp(firebaseConfig);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>db = firebase.database();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>isOnline = true;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} catch(e) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>console.error('Firebase init error', e);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>localMode = true;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">} else {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localMode = true;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('localBanner').classList.add('show');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">const defaultEmployees = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp1', name: 'Кармазиков Константин', surname: 'Кармазиков', position: 'Зав. постановочной частью' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp2', name: 'Тузова Наталья',<span class="Apple-converted-space">        </span>surname: 'Тузова', <span class="Apple-converted-space">    </span>position: 'Начальник осветительного цеха' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp3', name: 'Родавичюс Павел', <span class="Apple-converted-space">      </span>surname: 'Родавичюс',<span class="Apple-converted-space">  </span>position: 'Осветитель' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp4', name: 'Николаев Илья', <span class="Apple-converted-space">        </span>surname: 'Николаев', <span class="Apple-converted-space">  </span>position: 'Начальник звукоцеха' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp5', name: 'Новиков Павел', <span class="Apple-converted-space">        </span>surname: 'Новиков',<span class="Apple-converted-space">    </span>position: 'Звукоинженер' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp6', name: 'Шанин Александр', <span class="Apple-converted-space">      </span>surname: 'Шанин',<span class="Apple-converted-space">      </span>position: 'Помощник режиссёра' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp7', name: 'Иванов Роман',<span class="Apple-converted-space">          </span>surname: 'Иванов', <span class="Apple-converted-space">    </span>position: 'Рабочий сцены' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp8', name: 'Москвин Дмитрий', <span class="Apple-converted-space">      </span>surname: 'Москвин',<span class="Apple-converted-space">    </span>position: 'Рабочий сцены' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'emp9', name: 'Майоров Константин',<span class="Apple-converted-space">    </span>surname: 'Майоров',<span class="Apple-converted-space">    </span>position: 'Рабочий сцены' },</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">const mayEvents = [</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e1',<span class="Apple-converted-space">  </span>date: '2026-05-02', title: 'Распев', location: 'Алексеич', producer: 'Яснюк Ксюша', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e2',<span class="Apple-converted-space">  </span>date: '2026-05-03', title: 'Лекция: Архив x Кино', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e3',<span class="Apple-converted-space">  </span>date: '2026-05-06', title: 'АУДИОЗАПИСЬ лекции с муз. сопр.', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Николаев Илья', light: '', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e4',<span class="Apple-converted-space">  </span>date: '2026-05-09', title: 'ПЛЯС', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Новиков Паша', light: '', video: '', direction: '', budgetCode: '6.2.1 (премия)' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e5',<span class="Apple-converted-space">  </span>date: '2026-05-10', title: 'Бикапо', location: 'Зал', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e6',<span class="Apple-converted-space">  </span>date: '2026-05-16', title: 'Распев', location: 'Алексеич', producer: 'Яснюк Ксюша', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e7',<span class="Apple-converted-space">  </span>date: '2026-05-17', title: 'Ридинг и воркшоп "Камнем на сердце"', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: '', light: '', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e8',<span class="Apple-converted-space">  </span>date: '2026-05-17', title: 'Мастер-класс: ЛЭЗ', location: 'ЛЭЗ', producer: 'Белянина Арина', responsible: 'Кармазиков Костя', sound: '', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e9',<span class="Apple-converted-space">  </span>date: '2026-05-19', title: 'Показ видеоэссе + обсуждение', location: 'Зал', producer: 'Устинова Катя', responsible: 'Бондаренко Леша', sound: 'Николаев Илья', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: '', budgetCode: '6.2.1' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e10', date: '2026-05-21', title: 'Кинопоказ', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: '', budgetCode: '6.2.1' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e11', date: '2026-05-22', title: 'Кинопоказ и лекция Александра Зубковского', location: 'Зал', producer: 'Саламатов Рома', responsible: 'Тузова Наташа', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: 'Шанин Саша', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e12', date: '2026-05-23', title: 'Книжный клуб', location: 'Лекторий', producer: 'Третьякова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e13', date: '2026-05-24', title: 'Лекция "Кладбища и городская жизнь...", 14:00', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e14', date: '2026-05-24', title: '137. Сны между страстью и смертью', location: 'Зал', producer: 'Третьякова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: 'Павлов Максим', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e15', date: '2026-05-25', title: 'Танц. паблик-ток + джем: Ольга Цветкова', location: 'Зал', producer: 'Сычева Алиса', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '6.2.1' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e16', date: '2026-05-27', title: 'Концерт / Старинная музыка // Бах', location: 'Зал', producer: 'Абашева Софья', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Тузова Н., Родавичюс П.', video: '', direction: 'Шанин Саша', budgetCode: '6.3.1' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e17', date: '2026-05-30', title: 'Танц. майндмэп (+ лестница)', location: 'Алексеич', producer: 'Сычева Алиса', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Тузова Н., Родавичюс П.', video: '', direction: '', budgetCode: '6.2.1' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e18', date: '2026-05-30', title: 'ПЛЯС', location: 'Зал', producer: 'Устинова Катя', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Тузова Н., Родавичюс П.', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e19', date: '2026-05-30', title: 'Распев (завершение сезона)', location: 'Лекторий', producer: 'Яснюк Ксюша', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e20', date: '2026-05-30', title: 'Воркшоп: кинонаправление', location: 'ЛЭЗ', producer: 'Устинова Катя', responsible: 'Тузова Наташа', sound: '', light: '', video: '', direction: '', budgetCode: '' },</p>
-<p class="p1"><span class="Apple-converted-space">  </span>{ id: 'e21', date: '2026-05-31', title: 'Танц. майндмэп', location: 'Алексеич', producer: 'Сычева Алиса', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '6.2.1' },</p>
-<p class="p1">];</p>
-<p class="p2"><br></p>
-<p class="p1">const compactEventsText = `</p>
-<p class="p1"># СЕЗОН 2026/27</p>
-<p class="p1">2026-08-31|Репетиция MA-Dance 11:00-18:00|Зал</p>
-<p class="p1">2026-08-31|Город как звук (А39, Москва) — гастроли до 06.09|Москва</p>
-<p class="p1">2026-09-01|Репетиция MA-Dance 11:00-18:00|Зал</p>
-<p class="p1">2026-09-01|Город как звук (А39, Москва)|Москва</p>
-<p class="p1">2026-09-02|Репетиция MA-Dance 11:00-18:00|Зал</p>
-<p class="p1">2026-09-02|Город как звук (А39, Москва)|Москва</p>
-<p class="p1">2026-09-03|Репетиция MA-Dance 11:00-18:00|Зал</p>
-<p class="p1">2026-09-03|Город как звук (А39, Москва)|Москва</p>
-<p class="p1">2026-09-04|Тех. пробы для концерта Sonorum (12:00-18:00)|Зал</p>
-<p class="p1">2026-09-04|Репетиция: Камерный концерт «Внутренний голос» (19:45-22:15)|Зал</p>
-<p class="p1">2026-09-05|Artist talk к камерному концерту (19:00)|Зал</p>
-<p class="p1">2026-09-05|Камерный концерт «Внутренний голос» (20:00)|Зал</p>
-<p class="p1">2026-09-06|БИКАПО (регистрация с 20:00)|Зал</p>
-<p class="p1">2026-09-07|Гастроли: Землетрясение (Тузова, Николаев, Шанин, Иванов) до 13.09|Гастроли</p>
-<p class="p1">2026-09-10|Репетиция: Запись Голль/Архипов|Зал</p>
-<p class="p1">2026-09-10|Камерный концерт Стас Михайловский — Репетиция|Зал</p>
-<p class="p1">2026-09-11|Запись Голль/Архипов|Зал</p>
-<p class="p1">2026-09-12|Камерный концерт Стас Михайловский — Репетиция|Зал</p>
-<p class="p1">2026-09-14|Кинопоказ х Театр HD — Тех.репетиция (16:00)|Зал</p>
-<p class="p1">2026-09-16|Камерный концерт Стас Михайловский, флейта (20:00)|Зал</p>
-<p class="p1">2026-09-17|Монтаж света|Зал</p>
-<p class="p1">2026-09-18|Репетиция «Песни Теодора к вечеринке 19.09» (17:00-19:20)|Зал</p>
-<p class="p1">2026-09-19|ПЛЯС + ЛСЗ (11:00-12:30)|Зал</p>
-<p class="p1">2026-09-19|ПЛЯС + ЛСЗ 60+ (13:00-14:30)|Зал</p>
-<p class="p1">2026-09-19|Мастер-класс Жоржа Бартеля (14:00-17:00)|Лекторий</p>
-<p class="p1">2026-09-19|Кинопоказ х Театр HD «Кармен» (18:00)|Зал</p>
-<p class="p1">2026-09-19|Лаборатория современного зрителя. Воркшоп по французскому языку (20:00)|Зал</p>
-<p class="p1">2026-09-19|Закрытая вечеринка для друзей Теодора (23:00)|Зал</p>
-<p class="p1">2026-09-22|Монтаж Mader Nort (инсталляция с ковром)|Хранилище</p>
-<p class="p1">2026-09-23|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-09-23|Монтаж Mader Nort|Хранилище</p>
-<p class="p1">2026-09-24|Монтаж Mader Nort|Хранилище</p>
-<p class="p1">2026-09-25|Выставка Mader Nort (12:00-22:00)|Хранилище</p>
-<p class="p1">2026-09-25|Монтаж света mA Dance|Зал</p>
-<p class="p1">2026-09-26|Выставка Mader Nort (12:00-22:00)|Хранилище</p>
-<p class="p1">2026-09-26|ПЛЯС (11:00-12:30)|Зал</p>
-<p class="p1">2026-09-26|ПЛЯС 60+ (13:00-14:30)|Зал</p>
-<p class="p1">2026-09-26|Репетиция mA Dance lumen et umbra|Зал</p>
-<p class="p1">2026-09-26|mA Dance lumen et umbra (20:00)|Зал</p>
-<p class="p1">2026-09-27|Выставка Mader Nort (12:00-18:30)|Хранилище</p>
-<p class="p1">2026-09-27|Репетиция mA Dance lumen et umbra|Зал</p>
-<p class="p1">2026-09-28|Демонтаж Mader Nort|Хранилище</p>
-<p class="p1">2026-09-28|mA Dance lumen et umbra|Зал</p>
-<p class="p1">2026-09-28|Запись ударных для произведения Теодора (10:00-20:00)|ТТЦ Чапыгина</p>
-<p class="p1">2026-09-29|Кастинг в МА Дэнс (13:00-20:00)|Зал</p>
-<p class="p1">2026-09-30|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-09-30|Кастинг в МА Дэнс (13:00-20:00)|Зал</p>
-<p class="p1">2026-10-01|Кинопоказ закрытый Noir Films (20:00)|Зал</p>
-<p class="p1">2026-10-02|Лаборатория современного зрителя. Онлайн-лекция Ляли Кандауровой (20:00-21:30)|Зал</p>
-<p class="p1">2026-10-02|ЛЭЗ decode silence — инструктаж (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-10-03|ПЛЯС (11:00-12:30)|Хранилище</p>
-<p class="p1">2026-10-03|ПЛЯС 60+ (13:00-14:30)|Хранилище</p>
-<p class="p1">2026-10-03|РАСПЕВ (13:00-15:00)|Лекторий</p>
-<p class="p1">2026-10-03|Камерный концерт «Шостакович» — Репетиция (15:00)|Зал</p>
-<p class="p1">2026-10-03|ЛЭЗ decode silence — выход в город (16:00-18:00)|Город</p>
-<p class="p1">2026-10-03|«Слушаем Моцарта» с Евой Геворгян (15:30-17:00)|Хранилище</p>
-<p class="p1">2026-10-03|ПОВТОР ПРОГРАММЫ 19.09 (20:30)|Зал</p>
-<p class="p1">2026-10-04|Камерный концерт «Шостакович» к 120-летию (20:00)|Зал</p>
-<p class="p1">2026-10-04|ЛЭЗ decode silence — выход в город (16:00-18:00)|Город</p>
-<p class="p1">2026-10-06|Репетиция Just Ensemble (15:00-22:00)|Зал</p>
-<p class="p1">2026-10-07|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-10-07|Репетиция Just Ensemble (15:00-22:00)|Зал</p>
-<p class="p1">2026-10-08|Лекция «Семь покрывал Катерины Измайловой» (20:00)|Хранилище</p>
-<p class="p1">2026-10-09|Репетиция Just Ensemble (11:00-19:00)|Зал</p>
-<p class="p1">2026-10-10|Кинопоказ х Театр HD. Венская опера: Иоланта (17:00)|Зал</p>
-<p class="p1">2026-10-11|БИКАПО (регистрация 20:00)|Зал</p>
-<p class="p1">2026-10-13|Репетиция концерта хора|Зал</p>
-<p class="p1">2026-10-14|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-10-14|Концерт хора (20:00)|Зал</p>
-<p class="p1">2026-10-15|«Землетрясение» mA Dance — тех.день|Зал</p>
-<p class="p1">2026-10-16|«Землетрясение» mA Dance — реп.день|Зал</p>
-<p class="p1">2026-10-17|«Землетрясение» mA Dance — показ (20:00)|Зал</p>
-<p class="p1">2026-10-18|«Землетрясение» mA Dance — показ (20:00)|Зал</p>
-<p class="p1">2026-10-20|Послание к человеку (19:00)|Зал</p>
-<p class="p1">2026-10-20|Монтаж Альма-матер «Стихам здесь не место»|Хранилище</p>
-<p class="p1">2026-10-21|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-10-21|Репетиция Альма-матер (12:00-18:00)|Хранилище</p>
-<p class="p1">2026-10-21|Альма-матер «Стихам здесь не место» (19:00-21:00)|Хранилище</p>
-<p class="p1">2026-10-21|Репетиция к концерту JUST Ensemble (12:00-18:00)|Зал</p>
-<p class="p1">2026-10-22|Послание к человеку — Репетиция (15:00)|Зал</p>
-<p class="p1">2026-10-22|Послание к человеку — кино под муз. сопровождение (19:00)|Зал</p>
-<p class="p1">2026-10-22|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-10-23|Репетиция + монтаж к концерту JUST Ensemble (12:00-18:00)|Зал</p>
-<p class="p1">2026-10-23|«Не только АССА и Сайгон» — лекция Игоря Кузьмичева (20:00)|Хранилище</p>
-<p class="p1">2026-10-24|Монтаж / саундчек / репетиция JUST Ensemble &amp; Corps (10:00-19:00)|Зал</p>
-<p class="p1">2026-10-24|РАСПЕВ (13:00-15:00)|Хранилище</p>
-<p class="p1">2026-10-24|Концерт Just Ensemble &amp; Corps (20:00)|Зал</p>
-<p class="p1">2026-10-25|Фьорд (17:00)|Зал</p>
-<p class="p1">2026-10-26|Монтаж света для Дэнс + репетиция|Зал</p>
-<p class="p1">2026-10-26|Запись хора для Кантаты (Одоевского 24)|Одоевского 24</p>
-<p class="p1">2026-10-27|mA Dance &amp; Friends (free)|Зал</p>
-<p class="p1">2026-10-27|Запись хора для Кантаты (Одоевского 24)|Одоевского 24</p>
-<p class="p1">2026-10-28|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-10-28|Камерный концерт. Музыка для арфы и виолончели — Репетиция (14:00-22:00)|Зал</p>
-<p class="p1">2026-10-28|Открытая встреча с композитором Юрием Красавиным (20:00)|Хранилище</p>
-<p class="p1">2026-10-29|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-10-29|Камерный концерт. Музыка для арфы и виолончели (20:00)|Зал</p>
-<p class="p1">2026-10-30|ПЛЯС (16:45-18:45)|Хранилище</p>
-<p class="p1">2026-10-30|Концерт Сонорум (20:00)|Зал</p>
-<p class="p1">2026-10-31|ПЛЯС (11:00-12:30)|Зал</p>
-<p class="p1">2026-10-31|ПЛЯС 60+ (13:00-14:30)|Зал</p>
-<p class="p1">2026-10-31|Тех.день Альма матер (15:00)|Зал</p>
-<p class="p1">2026-10-31|Монтаж Запись Голль / Мустукис (до 15:00)|Зал</p>
-<p class="p1">2026-10-31|Лаборатория «Шостакович в диалогах — I» (19:00)|Зал</p>
-<p class="p1">2026-11-01|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий</p>
-<p class="p1">2026-11-02|Запись Голль / Мустукис (весь день)|Зал</p>
-<p class="p1">2026-11-03|Монтаж выставки ЛЭЗ|Хранилище</p>
-<p class="p1">2026-11-03|Репетиции Альма-матер|Зал</p>
-<p class="p1">2026-11-04|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-11-04|Альма-матер. Спектакли лаборатории «Ода дню», «Дедушка.Встреча»|Зал</p>
-<p class="p1">2026-11-05|Хор репетиция (17:30)|Зал</p>
-<p class="p1">2026-11-05|Театральная встреча Алексеич (19:00-21:00)|Алексеич</p>
-<p class="p1">2026-11-05|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-11-05|Монтаж света весь день|Зал</p>
-<p class="p1">2026-11-06|Прогон концерта хора (17:30-19:15)|Зал</p>
-<p class="p1">2026-11-06|Концерт хора MA. Русская духовная музыка XX века (20:00)|Зал</p>
-<p class="p1">2026-11-07|ПЛЯС (13:00-14:30)|Зал</p>
-<p class="p1">2026-11-07|РАСПЕВ (13:00-15:00)|Лекторий</p>
-<p class="p1">2026-11-07|Мастер-класс Софии Георгиу (15:00-17:00)|Лекторий</p>
-<p class="p1">2026-11-07|«Превратности судьбы Сергея Довлатова» (18:00)|Лекторий</p>
-<p class="p1">2026-11-07|«Ночь» — Репетиция к 15.11 (18:30)|Зал</p>
-<p class="p1">2026-11-08|Дягилев P.S.|Зал</p>
-<p class="p1">2026-11-08|ПЛЯС 60+ (15:00-16:30)|Зал</p>
-<p class="p1">2026-11-08|M shorts: лучший российский короткий метр (18:00)|Зал</p>
-<p class="p1">2026-11-09|Лаборатория «Шостакович в диалогах — II» (19:00)|Зал</p>
-<p class="p1">2026-11-10|Монтаж выставки ЛЭЗ|Хранилище</p>
-<p class="p1">2026-11-10|ЛЭЗ Запись трансляции радио KURS (12:00-20:00)|Зал</p>
-<p class="p1">2026-11-10|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-11-11|Выставка ЛЭЗ|Хранилище</p>
-<p class="p1">2026-11-11|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн</p>
-<p class="p1">2026-11-11|Кинопоказ х Театр HD. Роберт Уилсон: Красота — в загадке (19:00)|Зал</p>
-<p class="p1">2026-11-12|Выставка ЛЭЗ — Открытие для прессы (18:00-20:00)|Хранилище</p>
-<p class="p1">2026-11-13|Николай Метнер — РЕПЕТИЦИЯ (с 12:00)|Зал</p>
-<p class="p1">2026-11-13|Лекция-концерт к 75-летию Метнера (20:00)|Зал</p>
-<p class="p1">2026-11-14|ПЛЯС (11:00-12:30)|Лекторий</p>
-<p class="p1">2026-11-14|ПЛЯС 60+ (13:00-14:30)|Лекторий</p>
-<p class="p1">2026-11-14|Концерт-открытие выставки ЛЭЗ: Электричество (20:00)|Зал</p>
-<p class="p1">2026-11-15|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-11-15|Дягилев P.S. (12:00-15:00)|Зал</p>
-<p class="p1">2026-11-15|«Ночь». Концерт солистов хора musicAeterna (19:00)|Зал</p>
-<p class="p1">2026-11-15|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий</p>
-<p class="p1">2026-11-16|Тех.день «Почему нет?» mA Dance|Зал</p>
-<p class="p1">2026-11-17|Репетиция «Почему нет?» mA Dance|Зал</p>
-<p class="p1">2026-11-18|Репетиция «Почему нет?» mA Dance|Зал</p>
-<p class="p1">2026-11-19|Репетиция «Почему нет?» mA Dance|Зал</p>
-<p class="p1">2026-11-19|Медиация. Выставка ЛЭЗ: Электричество (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-11-20|Репетиция «Почему нет?» mA Dance|Зал</p>
-<p class="p1">2026-11-20|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-11-20|«Бах из окрестностей пожарного депо»: Сергей Танеев (20:00)|Лекторий</p>
-<p class="p1">2026-11-21|«Почему нет?» mA Dance — премьера|Зал</p>
-<p class="p1">2026-11-22|«Почему нет?» mA Dance — премьера|Зал</p>
-<p class="p1">2026-11-22|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-11-23|Запись Голль / Мустукис (весь день)|Зал</p>
-<p class="p1">2026-11-24|Лаборатория современного зрителя. «Шенберг и Штраус» (19:00)|Зал</p>
-<p class="p1">2026-11-25|Лаборатория современного зрителя. Творческая встреча с Ф. Безносиковым (19:00)|Зал</p>
-<p class="p1">2026-11-26|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-11-26|Малика (19:00)|Зал</p>
-<p class="p1">2026-11-26|Репетиция «Стыд» mA Dance|Зал</p>
-<p class="p1">2026-11-27|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-11-27|Рояль как звуковой объект — Репетиция (с 12:00)|Зал</p>
-<p class="p1">2026-11-28|РАСПЕВ (13:00-15:00)|Лекторий</p>
-<p class="p1">2026-11-28|Академия Рубинштейна — Монтаж света до 17:00|Зал</p>
-<p class="p1">2026-11-28|ЛЭЗ. Мастер-класс «Дроун синтезатор» (14:00)|ЛЭЗ 103</p>
-<p class="p1">2026-11-28|«Стыд» mA Dance — показ (20:00)|Зал</p>
-<p class="p1">2026-11-29|Концерт «Возможно мы». Академия Рубинштейна (19:00)|Зал</p>
-<p class="p1">2026-11-29|ЛЭЗ. Мастер-класс «Circuit bent эхо-процессор» (14:00)|ЛЭЗ 103</p>
-<p class="p1">2026-11-30|Концерт «Возможно мы». Академия Рубинштейна (19:00)|Зал</p>
-<p class="p1">2026-11-30|ПЛЯС (18:30-20:00)|Лекторий</p>
-<p class="p1">2026-11-30|ПЛЯС (20:30-22:00)|Лекторий</p>
-<p class="p1">2026-12-01|Репетиция концерта Кирилла Архипова|Зал</p>
-<p class="p1">2026-12-01|Театральная встреча Алексеич (19:00-21:00)|Алексеич</p>
-<p class="p1">2026-12-02|Репетиция концерта Кирилла Архипова|Зал</p>
-<p class="p1">2026-12-02|Прошуттерия x Дом Радио (19:00-23:00)|Дом Радио</p>
-<p class="p1">2026-12-03|Концерт Кирилла Архипова Distorted (19:00-20:00)|Зал</p>
-<p class="p1">2026-12-03|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-03|Закрытый концерт ГАЗПРОМ. Барочная программа|Зал</p>
-<p class="p1">2026-12-03|Репетиция концерта Кирилла Архипова|Зал</p>
-<p class="p1">2026-12-03|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-12-04|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-12-05|ПЛЯС (11:00-12:30)|Лекторий</p>
-<p class="p1">2026-12-05|ПЛЯС 60+ (13:00-14:30)|Лекторий</p>
-<p class="p1">2026-12-05|ЛЭЗ Концерт БИСК X (20:00)|Зал</p>
-<p class="p1">2026-12-06|БИКАПО (20:00)|Зал</p>
-<p class="p1">2026-12-06|«Ленинградские денди» (18:00)|Лекторий</p>
-<p class="p1">2026-12-06|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-06|Лаборатория Норникель (весь день)|Репетитории 3 эт.</p>
-<p class="p1">2026-12-07|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории</p>
-<p class="p1">2026-12-08|Камерный концерт — Репетиция (17:00)|Зал</p>
-<p class="p1">2026-12-08|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории</p>
-<p class="p1">2026-12-09|Камерный концерт. Бетховен: 13 квартет и Große Fugue (20:00)|Зал</p>
-<p class="p1">2026-12-09|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории</p>
-<p class="p1">2026-12-10|Кинособытие. Лекция (19:00)|Зал</p>
-<p class="p1">2026-12-10|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории</p>
-<p class="p1">2026-12-10|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-11|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-12-11|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории</p>
-<p class="p1">2026-12-11|«Духовная эволюция Джона Колтрейна» — перформанс и лекция (12:00-20:00)|Зал</p>
-<p class="p1">2026-12-11|Камерный концерт. Андреас + пианист (20:00, tbc)|Зал</p>
-<p class="p1">2026-12-12|Лаборатория оркестрового мастерства — Итоговый концерт (16:00)|Зал</p>
-<p class="p1">2026-12-12|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-13|Кинопоказ х Театр HD. Роберт Уилсон: Орфей и Эвридика (18:00)|Зал</p>
-<p class="p1">2026-12-13|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий/Зал</p>
-<p class="p1">2026-12-15|«Любить». Лаборатория современного танца — Репетиция (12:00-20:00)|Зал</p>
-<p class="p1">2026-12-15|«Любовь как маленькая смерть» — лекция Виты Хлоповой (20:00)|Зал</p>
-<p class="p1">2026-12-16|«Любить» — Репетиция (12:00-20:00)|Зал</p>
-<p class="p1">2026-12-17|«Любить» — Репетиция (12:00-20:00)|Зал</p>
-<p class="p1">2026-12-17|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-18|«Любить» — Репетиция (12:00-20:00)|Зал</p>
-<p class="p1">2026-12-18|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-12-19|«Любить» — Показ лаборатории (12:00-20:00)|Зал/Лекторий</p>
-<p class="p1">2026-12-19|«Любить» — Показ (20:00)|Зал</p>
-<p class="p1">2026-12-19|ЛЭЗ. Мастер-класс «Карплус-Стронг синтезатор» (14:00)|ЛЭЗ 103</p>
-<p class="p1">2026-12-20|«Нераздельно и неслиянно: искусство контрапункта» — лекция Ляли Кандауровой (18:00)|Лекторий</p>
-<p class="p1">2026-12-20|Концерт Большого Распева (20:00)|Зал</p>
-<p class="p1">2026-12-20|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-22|«Реставрация Дома Радио» — лекция Марии Шапченко (19:00)|Лекторий</p>
-<p class="p1">2026-12-23|Борис Юхананов, часть 1 (19:00)|Зал</p>
-<p class="p1">2026-12-24|Борис Юхананов, часть 2 (19:00)|Зал</p>
-<p class="p1">2026-12-24|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-25|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103</p>
-<p class="p1">2026-12-25|МУЗЫКАЛЬНО-ПОЭТИЧЕСКИЙ ПЕРФОРМАНС «ОРКиКО» (20:00)|Зал</p>
-<p class="p1">2026-12-26|Концерт «Хор и Серебряный век: Музыкальные миры Дмитрия Смирнова» (20:00)|Зал</p>
-<p class="p1">2026-12-26|РАСПЕВ (13:00-15:00)|Лекторий</p>
-<p class="p1">2026-12-27|ПЛЯС (11:00-12:30)|Зал</p>
-<p class="p1">2026-12-27|ПЛЯС 60+ (13:00-14:30)|Зал</p>
-<p class="p1">2026-12-27|«Новый 1927-й: истории из дома на краю города» — лекция Даниэля Лурье (18:00)|Лекторий</p>
-<p class="p1">2026-12-27|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий/Зал</p>
-<p class="p1">2026-12-27|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище</p>
-<p class="p1">2026-12-28|ПЛЯС (19:00-21:00)|Лекторий</p>
-<p class="p1">2026-12-29|Новый год|Зал</p>
-<p class="p1">2027-01-10|Распев (13:00-14:30)|Хранилище</p>
-<p class="p1">2027-01-11|Молодежный оркестр (12:00-15:00)|Хранилище</p>
-<p class="p1">2027-01-12|Концерт Алексея Ретинского|Зал</p>
-<p class="p1">2027-01-13|Концерт Алексея Ретинского|Зал</p>
-<p class="p1">2027-01-14|Концерт Алексея Ретинского|Зал</p>
-<p class="p1">2027-01-15|Концерт Алексея Ретинского (tickets)|Зал</p>
-<p class="p1">2027-01-16|Лекция Александра Андрияшкина (19:30)|Лекторий</p>
-<p class="p1">2027-01-16|Рециталы. Анна Комарова, флейта — Репетиция|Зал</p>
-<p class="p1">2027-01-17|Воркшоп Александра Андрияшкина|Лекторий</p>
-<p class="p1">2027-01-17|Рециталы. Анна Комарова, флейта (20:00)|Зал</p>
-<p class="p1">2027-01-17|БИКАПО (20:00)|Зал</p>
-<p class="p1">2027-01-17|АЛЬМАМАТЕР. Лекция ТБС. Разговоры|Лекторий</p>
-<p class="p1">2027-01-18|Молодежный оркестр (12:00-15:00)|Хранилище</p>
-<p class="p1">2027-01-19|Парфюмерный ужин (тбс)|Зал</p>
-<p class="p1">2027-01-20|Иранское кино. Лекция (19:00)|Лекторий</p>
-<p class="p1">2027-01-21|Репетиция. Концерт Кирилла Архипова «Обрыв ли овраг ли цветочный луг»|Зал</p>
-<p class="p1">2027-01-22|Репетиция. Концерт Кирилла Архипова|Зал</p>
-<p class="p1">2027-01-22|Концерт Кирилла Архипова «Обрыв ли овраг ли цветочный луг» (20:00)|Зал</p>
-<p class="p1">2027-01-23|Распев (13:00-14:30)|Большой зал</p>
-<p class="p1">2027-01-23|ЛОСН. Встреча к концерту|Зал</p>
-<p class="p1">2027-01-24|Рок-концерт Life on Venus (время tbc)|Зал</p>
-<p class="p1">2027-01-25|Молодежный оркестр (12:00-15:00)|Хранилище</p>
-<p class="p1">2027-01-26|Иранское кино. Кинопоказ (19:00)|Зал</p>
-<p class="p1">2027-01-27|Репетиции Хор mA (И. Горин)|Зал</p>
-<p class="p1">2027-01-28|Репетиции Хор mA (А. Немзер, И. Горин) — до 18:00|Зал</p>
-<p class="p1">2027-01-29|Моноспектакль Лизы Боярской «137. Сны о страсти и смерти» (20:00)|Зал</p>
-<p class="p1">2027-01-30|Концерт Хор mA: Duo Seraphim — Репетиция (не раньше 15:00)|Зал</p>
-<p class="p1">2027-01-30|Фотовыставка хора (19:00)|Алексеич/Хранилище</p>
-<p class="p1">2027-01-31|Концерт Хор mA: Duo Seraphim (20:00)|Зал</p>
-<p class="p1">2027-01-31|Фотовыставка хора (19:00)|Алексеич/Хранилище</p>
-<p class="p1">2027-01-31|Молодежный оркестр (12:00-15:00)|Хранилище</p>
-<p class="p1">`;</p>
-<p class="p2"><br></p>
-<p class="p1">function parseCompactEvents(text) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const lines = text.trim().split('\n');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const result = [];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let idx = 0;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (const line of lines) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const trimmed = line.trim();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!trimmed || trimmed.startsWith('#')) continue;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const parts = trimmed.split('|');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (parts.length &lt; 2) continue;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>result.push({</p>
-<p class="p1"><span class="Apple-converted-space">      </span>id: 'p_' + (idx++),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>date: parts[0],</p>
-<p class="p1"><span class="Apple-converted-space">      </span>title: parts[1],</p>
-<p class="p1"><span class="Apple-converted-space">      </span>location: parts[2] || '',</p>
-<p class="p1"><span class="Apple-converted-space">      </span>producer: '', responsible: '', sound: '', light: '', video: '', direction: '', budgetCode: ''</p>
-<p class="p1"><span class="Apple-converted-space">    </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return result;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">let state = { employees: [], events: [], hours: {} };</p>
-<p class="p1">let currentMonth = null;</p>
-<p class="p1">let currentEventId = null;</p>
-<p class="p1">let suppressRender = false;</p>
-<p class="p2"><br></p>
-<p class="p1">function formatMonth(m) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const [y, mo] = m.split('-');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const n = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return n[parseInt(mo)-1] + ' ' + y;</p>
-<p class="p1">}</p>
-<p class="p1">function formatDate(d) { const [y,m,day] = d.split('-'); return day+'.'+m+'.'+y; }</p>
-<p class="p1">function getMonths() { return [...new Set(state.events.map(e =&gt; e.date.slice(0,7)))].sort(); }</p>
-<p class="p1">function getMonthEvents() { return state.events.filter(e =&gt; e.date.startsWith(currentMonth)).sort((a,b) =&gt; a.date.localeCompare(b.date) || a.title.localeCompare(b.title)); }</p>
-<p class="p1">function escapeHtml(s) { return String(s||'').replace(/[&amp;&lt;&gt;"']/g, c =&gt; ({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','"':'&amp;quot;',"'":'&amp;#39;'}[c])); }</p>
-<p class="p1">function round1(n) { return Math.round(n*10)/10; }</p>
-<p class="p1">function uid(prefix) { return (prefix||'id') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }</p>
-<p class="p2"><br></p>
-<p class="p1">async function initData() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!isOnline) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>try {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const raw = localStorage.getItem('overtime_local_v4');</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (raw) { state = JSON.parse(raw); return; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>} catch(e) {}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state = {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>employees: defaultEmployees.map(x =&gt; ({...x})),</p>
-<p class="p1"><span class="Apple-converted-space">      </span>events: [...mayEvents.map(x =&gt; ({...x})), ...parseCompactEvents(compactEventsText)],</p>
-<p class="p1"><span class="Apple-converted-space">      </span>hours: {}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>saveLocal();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const metaSnap = await db.ref('meta/initialized').once('value');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!metaSnap.val()) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const emps = {}; defaultEmployees.forEach(e =&gt; emps[e.id] = e);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const evs = {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>[...mayEvents, ...parseCompactEvents(compactEventsText)].forEach(e =&gt; evs[e.id] = e);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>await db.ref('employees').set(emps);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>await db.ref('events').set(evs);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>await db.ref('meta/initialized').set(true);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function saveLocal() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>try { localStorage.setItem('overtime_local_v4', JSON.stringify(state)); } catch(e) {}</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function subscribeFirebase() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>db.ref('employees').on('value', snap =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const val = snap.val() || {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.employees = Object.values(val);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!suppressRender) render();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>db.ref('events').on('value', snap =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const val = snap.val() || {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.events = Object.values(val);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!suppressRender) render();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>db.ref('hours').on('value', snap =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>state.hours = snap.val() || {};</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateHoursInPlace();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>updateSummary();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const uidKey = localStorage.getItem('presence_uid') || uid('u');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>localStorage.setItem('presence_uid', uidKey);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const pRef = db.ref('presence/' + uidKey);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>pRef.onDisconnect().remove();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>pRef.set({ ts: Date.now() });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setInterval(() =&gt; pRef.set({ ts: Date.now() }), 30000);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>db.ref('presence').on('value', snap =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const list = Object.values(snap.val() || {}).filter(p =&gt; Date.now() - p.ts &lt; 120000);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('onlineCount').style.display = list.length ? 'inline-flex' : 'none';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('onlineNum').textContent = list.length;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function setStatus(status, text) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dot = document.getElementById('statusDot');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dot.className = 'status-dot ' + status;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('statusText').textContent = text;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">if (isOnline) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setStatus('online', 'Подключение…');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>db.ref('.info/connected').on('value', snap =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (snap.val() === true) setStatus('online', 'Подключено');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else setStatus('offline', 'Нет соединения');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">} else {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setStatus('local', 'Локальный режим');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function render() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const months = getMonths();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!months.length) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('monthTabs').innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('eventList').innerHTML = '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('mainPanel').innerHTML = '&lt;div class="card"&gt;&lt;div class="empty"&gt;Нет данных. Добавьте мероприятие.&lt;/div&gt;&lt;/div&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!currentMonth || !months.includes(currentMonth)) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const today = new Date().toISOString().slice(0,7);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>currentMonth = months.includes(today) ? today : months[0];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('monthTabs');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML = months.map(m =&gt; '&lt;button class="month-tab ' + (m===currentMonth?'active':'') + '" data-month="' + m + '"&gt;' + formatMonth(m) + '&lt;/button&gt;').join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.querySelectorAll('.month-tab').forEach(b =&gt; b.onclick = () =&gt; { currentMonth = b.dataset.month; currentEventId = null; render(); });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderEventList();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>renderMainPanel();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderEventList() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const events = getMonthEvents();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('eventList');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let html = '&lt;div class="event-item summary-item ' + (currentEventId===null?'active':'') + '" data-id="__summary__"&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="event-date"&gt;Сводка&lt;/div&gt;&lt;div class="event-title"&gt;<span class="s1">📊</span> Итого за ' + formatMonth(currentMonth) + '&lt;/div&gt;&lt;/div&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!events.length) html += '&lt;div class="empty"&gt;В этом месяце нет мероприятий&lt;/div&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else html += events.map(ev =&gt; '&lt;div class="event-item ' + (ev.id===currentEventId?'active':'') + '" data-id="' + ev.id + '"&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="event-date"&gt;' + formatDate(ev.date) + '&lt;/div&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="event-title"&gt;' + escapeHtml(ev.title) + '&lt;/div&gt;&lt;/div&gt;').join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML = html;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.querySelectorAll('.event-item').forEach(item =&gt; item.onclick = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>currentEventId = item.dataset.id === '__summary__' ? null : item.dataset.id;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>renderEventList(); renderMainPanel();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function getRoleFor(ev, empSurname) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const fields = [['responsible','Ответственный'],['sound','Звук'],['light','Свет'],['video','Видео'],['direction','Проведение']];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (const [f, label] of fields) if (ev[f] &amp;&amp; ev[f].includes(empSurname)) return label;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return '';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderMainPanel() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('mainPanel');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>let html = '';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (currentEventId) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ev = state.events.find(e =&gt; e.id === currentEventId);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (ev) html += renderEventCard(ev);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>html += renderMonthlySummary();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML = html;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>bindEventInputs();</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderEventCard(ev) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const hours = state.hours[ev.id] || {};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const meta = [];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (ev.location) meta.push('<span class="s1">📍</span> ' + escapeHtml(ev.location));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (ev.producer) meta.push('<span class="s1">🎬</span> ' + escapeHtml(ev.producer));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (ev.budgetCode) meta.push('<span class="s1">💰</span> ' + escapeHtml(ev.budgetCode));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const rows = state.employees.map(emp =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const role = getRoleFor(ev, emp.surname || emp.name.split(' ')[0]);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const h = hours[emp.id] || '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return '&lt;tr&gt;&lt;td&gt;' + escapeHtml(emp.name) + '&lt;/td&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'&lt;td class="position-cell"&gt;' + escapeHtml(emp.position || '') + '&lt;/td&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'&lt;td&gt;' + (role ? '&lt;span class="role-badge"&gt;' + role + '&lt;/span&gt;' : '—') + '&lt;/td&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'&lt;td&gt;&lt;input type="number" min="0" step="0.5" value="' + h + '" data-emp="' + emp.id + '" data-ev="' + ev.id + '" placeholder="0"&gt;&lt;/td&gt;&lt;/tr&gt;';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}).join('');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return '&lt;div class="card"&gt;&lt;div class="toolbar" style="margin-bottom:8px;"&gt;&lt;h2&gt;' + escapeHtml(ev.title) + '&lt;/h2&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div&gt;&lt;button onclick="openEventDialog(\'' + ev.id + '\')"&gt;<span class="s4">✎</span> Редактировать&lt;/button&gt; &lt;button onclick="deleteEvent(\'' + ev.id + '\')"&gt;<span class="s1">🗑</span>&lt;/button&gt;&lt;/div&gt;&lt;/div&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="meta"&gt;&lt;span&gt;<span class="s1">📅</span> ' + formatDate(ev.date) + '&lt;/span&gt;' + meta.map(m =&gt; '&lt;span&gt;' + m + '&lt;/span&gt;').join('') + '&lt;/div&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Сотрудник&lt;/th&gt;&lt;th&gt;Должность&lt;/th&gt;&lt;th&gt;Роль&lt;/th&gt;&lt;th&gt;Часы&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;' + rows + '&lt;/tbody&gt;&lt;/table&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;div class="event-total-bar"&gt;Итого за мероприятие: &lt;strong id="eventTotal"&gt;' + calcEventTotal(ev.id) + ' ч&lt;/strong&gt;&lt;/div&gt;&lt;/div&gt;';</p>
-<p class="p1">}</p>
-<p class="p1">function calcEventTotal(evId) { const h = state.hours[evId] || {}; return round1(Object.values(h).reduce((s,v) =&gt; s + (Number(v)||0), 0)); }</p>
-<p class="p2"><br></p>
-<p class="p1">function bindEventInputs() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('input[data-emp]').forEach(inp =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>inp.oninput = () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>const evId = inp.dataset.ev, empId = inp.dataset.emp, val = parseFloat(inp.value);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (!state.hours[evId]) state.hours[evId] = {};</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (val &amp;&amp; val &gt; 0) state.hours[evId][empId] = val; else delete state.hours[evId][empId];</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (isOnline) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>db.ref('hours/' + evId + '/' + empId).set(val &amp;&amp; val &gt; 0 ? val : null);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>saveLocal();</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const tot = document.getElementById('eventTotal');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (tot) tot.textContent = calcEventTotal(evId) + ' ч';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>updateSummary();</p>
-<p class="p1"><span class="Apple-converted-space">      </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateHoursInPlace() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.querySelectorAll('input[data-emp]').forEach(inp =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (document.activeElement === inp) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const evId = inp.dataset.ev, empId = inp.dataset.emp;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const val = state.hours[evId]?.[empId] || '';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (String(inp.value) !== String(val)) inp.value = val;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const tot = document.getElementById('eventTotal');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (tot &amp;&amp; currentEventId) tot.textContent = calcEventTotal(currentEventId) + ' ч';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function renderMonthlySummary() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const events = getMonthEvents();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dates = [...new Set(events.map(e =&gt; e.date))].sort();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const rows = state.employees.map(emp =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let totalHours = 0, overtime = 0, workDays = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const date of dates) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>let dayTotal = 0;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>for (const ev of events) if (ev.date === date) dayTotal += (Number(state.hours[ev.id]?.[emp.id]) || 0);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (dayTotal &gt; 0) workDays++;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>totalHours += dayTotal;</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (dayTotal &gt; 8) overtime += dayTotal - 8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>return { name: emp.name, position: emp.position || '', totalHours: round1(totalHours), workDays, overtime: round1(overtime) };</p>
-<p class="p1"><span class="Apple-converted-space">  </span>});</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const totalAll = round1(rows.reduce((s,r) =&gt; s + r.totalHours, 0));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const totalOt = round1(rows.reduce((s,r) =&gt; s + r.overtime, 0));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>return '&lt;div class="card" id="summary"&gt;&lt;h2&gt;Итого за ' + formatMonth(currentMonth) + '&lt;/h2&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;p class="hint"&gt;Норма — 8 часов в день. Переработка = часы сверх 8 за день (суммируются все мероприятия дня).&lt;/p&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Сотрудник&lt;/th&gt;&lt;th&gt;Должность&lt;/th&gt;&lt;th&gt;Рабочих дней&lt;/th&gt;&lt;th&gt;Всего часов&lt;/th&gt;&lt;th&gt;Переработка&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>rows.map(r =&gt; '&lt;tr&gt;&lt;td&gt;' + escapeHtml(r.name) + '&lt;/td&gt;&lt;td class="position-cell"&gt;' + escapeHtml(r.position) + '&lt;/td&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'&lt;td&gt;' + (r.workDays||'—') + '&lt;/td&gt;&lt;td&gt;' + (r.totalHours||'—') + '&lt;/td&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">      </span>'&lt;td class="' + (r.overtime&gt;0?'overtime':'') + '"&gt;' + (r.overtime&gt;0?r.overtime:'—') + '&lt;/td&gt;&lt;/tr&gt;').join('') +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;/tbody&gt;&lt;tfoot&gt;&lt;tr&gt;&lt;td&gt;Итого&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;' + totalAll + '&lt;/td&gt;&lt;td class="' + (totalOt&gt;0?'overtime':'') + '"&gt;' + (totalOt||'—') + '&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;&lt;/table&gt;&lt;/div&gt;';</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function updateSummary() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const old = document.getElementById('summary');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!old) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const tmp = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>tmp.innerHTML = renderMonthlySummary();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>old.replaceWith(tmp.firstElementChild);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function openEmployeeSettings() { renderEmployeeDialog(); document.getElementById('employeeDialog').showModal(); }</p>
-<p class="p1">function renderEmployeeDialog() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const el = document.getElementById('employeeList');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!state.employees.length) { el.innerHTML = '&lt;div class="empty"&gt;Нет сотрудников&lt;/div&gt;'; return; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>el.innerHTML = state.employees.map(emp =&gt; '&lt;div class="employee-row"&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;span class="emp-name"&gt;' + escapeHtml(emp.name) + '&lt;/span&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;span class="emp-pos"&gt;' + escapeHtml(emp.position || '—') + '&lt;/span&gt;' +</p>
-<p class="p1"><span class="Apple-converted-space">    </span>'&lt;button onclick="deleteEmployee(\'' + emp.id + '\')"&gt;Удалить&lt;/button&gt;&lt;/div&gt;').join('');</p>
-<p class="p1">}</p>
-<p class="p1">function addEmployee() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const nameInp = document.getElementById('newEmployeeName');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const posInp = document.getElementById('newEmployeePosition');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const name = nameInp.value.trim(); if (!name) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const emp = { id: uid('emp'), name, surname: name.split(' ')[0], position: posInp.value.trim() };</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (isOnline) db.ref('employees/' + emp.id).set(emp);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else { state.employees.push(emp); saveLocal(); renderEmployeeDialog(); renderMainPanel(); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>nameInp.value = ''; posInp.value = '';</p>
-<p class="p1">}</p>
-<p class="p1">function deleteEmployee(id) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!confirm('Удалить сотрудника?')) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (isOnline) db.ref('employees/' + id).remove();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else { state.employees = state.employees.filter(e =&gt; e.id !== id); saveLocal(); renderEmployeeDialog(); renderMainPanel(); }</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function openEventDialog(editId) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dlg = document.getElementById('eventDialog');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const h3 = dlg.querySelector('h3');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (editId) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ev = state.events.find(e =&gt; e.id === editId); if (!ev) return;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>h3.textContent = 'Редактировать мероприятие'; dlg.dataset.editId = editId;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventDate').value = ev.date;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventTitle').value = ev.title;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventLocation').value = ev.location||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventProducer').value = ev.producer||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventResponsible').value = ev.responsible||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventSound').value = ev.sound||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventLight').value = ev.light||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventVideo').value = ev.video||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventDirection').value = ev.direction||'';</p>
-<p class="p1"><span class="Apple-converted-space">    </span>document.getElementById('newEventBudget').value = ev.budgetCode||'';</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>h3.textContent = 'Добавить мероприятие'; delete dlg.dataset.editId;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>['newEventDate','newEventTitle','newEventLocation','newEventProducer','newEventResponsible','newEventSound','newEventLight','newEventVideo','newEventDirection','newEventBudget'].forEach(id =&gt; document.getElementById(id).value = '');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dlg.showModal();</p>
-<p class="p1">}</p>
-<p class="p1">function addEvent() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dlg = document.getElementById('eventDialog');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const date = document.getElementById('newEventDate').value;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const title = document.getElementById('newEventTitle').value.trim();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!date || !title) { alert('Укажите дату и название'); return; }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const data = {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>date, title,</p>
-<p class="p1"><span class="Apple-converted-space">    </span>location: document.getElementById('newEventLocation').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>producer: document.getElementById('newEventProducer').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>responsible: document.getElementById('newEventResponsible').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>sound: document.getElementById('newEventSound').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>light: document.getElementById('newEventLight').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>video: document.getElementById('newEventVideo').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>direction: document.getElementById('newEventDirection').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">    </span>budgetCode: document.getElementById('newEventBudget').value.trim(),</p>
-<p class="p1"><span class="Apple-converted-space">  </span>};</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (dlg.dataset.editId) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const id = dlg.dataset.editId;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ev = state.events.find(e =&gt; e.id === id);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (ev) Object.assign(ev, data);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (isOnline) db.ref('events/' + id).set({ ...ev, ...data });</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else { saveLocal(); render(); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const id = uid('ev');</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const ev = { id, ...data };</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (isOnline) db.ref('events/' + id).set(ev);</p>
-<p class="p1"><span class="Apple-converted-space">    </span>else { state.events.push(ev); saveLocal(); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>currentMonth = date.slice(0,7); currentEventId = null;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (!isOnline) render();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>dlg.close();</p>
-<p class="p1">}</p>
-<p class="p1">function deleteEvent(id) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (!confirm('Удалить мероприятие и все введённые часы?')) return;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (isOnline) { db.ref('events/' + id).remove(); db.ref('hours/' + id).remove(); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>else { state.events = state.events.filter(e =&gt; e.id !== id); delete state.hours[id]; saveLocal(); render(); }</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (currentEventId === id) currentEventId = null;</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function exportCSV() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const events = getMonthEvents();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const dates = [...new Set(events.map(e =&gt; e.date))].sort();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const lines = ['Сотрудник;Должность;Рабочих дней;Всего часов;Переработка'];</p>
-<p class="p1"><span class="Apple-converted-space">  </span>for (const emp of state.employees) {</p>
-<p class="p1"><span class="Apple-converted-space">    </span>let total = 0, ot = 0, days = 0;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>for (const date of dates) {</p>
-<p class="p1"><span class="Apple-converted-space">      </span>let d = 0; for (const ev of events) if (ev.date === date) d += (Number(state.hours[ev.id]?.[emp.id])||0);</p>
-<p class="p1"><span class="Apple-converted-space">      </span>if (d &gt; 0) days++; total += d; if (d &gt; 8) ot += d - 8;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>if (total &gt; 0) lines.push([emp.name, emp.position||'', days, round1(total), round1(ot)].join(';'));</p>
-<p class="p1"><span class="Apple-converted-space">  </span>}</p>
-<p class="p1"><span class="Apple-converted-space">  </span>download('\uFEFF' + lines.join('\n'), 'pererabotki_' + currentMonth + '.csv', 'text/csv;charset=utf-8');</p>
-<p class="p1">}</p>
-<p class="p1">function download(content, filename, mime) {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const blob = new Blob([content], { type: mime });</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const url = URL.createObjectURL(blob);</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const a = document.createElement('a'); a.href = url; a.download = filename; a.click();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>setTimeout(() =&gt; URL.revokeObjectURL(url), 1000);</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">function showShareInfo() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('shareUrl').value = window.location.href;</p>
-<p class="p1"><span class="Apple-converted-space">  </span>document.getElementById('shareDialog').showModal();</p>
-<p class="p1">}</p>
-<p class="p1">function copyShareUrl() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>const inp = document.getElementById('shareUrl');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>inp.select(); document.execCommand('copy');</p>
-<p class="p1"><span class="Apple-converted-space">  </span>alert('Ссылка скопирована!');</p>
-<p class="p1">}</p>
-<p class="p2"><br></p>
-<p class="p1">(async function start() {</p>
-<p class="p1"><span class="Apple-converted-space">  </span>await initData();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>if (isOnline) subscribeFirebase();</p>
-<p class="p1"><span class="Apple-converted-space">  </span>render();</p>
-<p class="p1">})();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<header>
+  <div class="toolbar">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <h1>Учёт переработок</h1>
+      <span class="status-bar">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Подключение…</span>
+      </span>
+      <span class="online-count" id="onlineCount" style="display:none;">👥 <span id="onlineNum">0</span> онлайн</span>
+    </div>
+    <div>
+      <button onclick="openEmployeeSettings()">👥 Сотрудники</button>
+      <button onclick="openEventDialog()">＋ Мероприятие</button>
+      <button onclick="exportCSV()">⤓ CSV</button>
+      <button onclick="showShareInfo()">🔗 Поделиться</button>
+    </div>
+  </div>
+  <div class="month-tabs" id="monthTabs"></div>
+</header>
+
+<div class="banner" id="localBanner">
+  ⚠️ Firebase не настроен — работает локальный режим. Проверьте databaseURL в конфиге.
+</div>
+
+<div class="container">
+  <aside class="event-list" id="eventList"></aside>
+  <div class="main-panel" id="mainPanel"></div>
+</div>
+
+<dialog id="employeeDialog">
+  <div class="dialog-body">
+    <h3>Сотрудники</h3>
+    <div id="employeeList"></div>
+    <div class="form-row" style="margin-top:16px;">
+      <input id="newEmployeeName" placeholder="Имя и фамилия">
+      <input id="newEmployeePosition" placeholder="Должность">
+      <button onclick="addEmployee()" class="btn-primary">Добавить</button>
+    </div>
+    <div class="dialog-actions">
+      <button onclick="document.getElementById('employeeDialog').close()">Закрыть</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="eventDialog">
+  <div class="dialog-body">
+    <h3>Добавить мероприятие</h3>
+    <div class="form-row"><input id="newEventDate" type="date"></div>
+    <div class="form-row"><input id="newEventTitle" placeholder="Название"></div>
+    <div class="form-row"><input id="newEventLocation" placeholder="Локация"></div>
+    <div class="form-row"><input id="newEventProducer" placeholder="Продюсер"></div>
+    <div class="form-row"><input id="newEventResponsible" placeholder="Ответственный за сетап"></div>
+    <div class="form-row"><input id="newEventSound" placeholder="Звук"></div>
+    <div class="form-row"><input id="newEventLight" placeholder="Свет"></div>
+    <div class="form-row"><input id="newEventVideo" placeholder="Видео"></div>
+    <div class="form-row"><input id="newEventDirection" placeholder="Проведение (помреж)"></div>
+    <div class="form-row"><input id="newEventBudget" placeholder="Код бюджета"></div>
+    <div class="dialog-actions">
+      <button onclick="document.getElementById('eventDialog').close()">Отмена</button>
+      <button onclick="addEvent()" class="btn-primary">Сохранить</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="shareDialog">
+  <div class="dialog-body">
+    <h3>Поделиться таблицей</h3>
+    <p style="font-size:14px;color:#555;">Скопируйте ссылку и отправьте коллегам. Они смогут открыть и редактировать в реальном времени.</p>
+    <div class="form-row" style="margin-top:16px;">
+      <input id="shareUrl" readonly>
+      <button onclick="copyShareUrl()" class="btn-primary">Копировать</button>
+    </div>
+    <div class="dialog-actions">
+      <button onclick="document.getElementById('shareDialog').close()">Закрыть</button>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+// ============================================================
+// 🔧 НАСТРОЙКА FIREBASE — ваш конфиг
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDSCD46k_xoYZq_rx4JIhQnD_XpIILBy-8",
+  authDomain: "dom-radio-overtime-dad2d.firebaseapp.com",
+  databaseURL: "https://dom-radio-overtime-dad2d-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "dom-radio-overtime-dad2d",
+  storageBucket: "dom-radio-overtime-dad2d.firebasestorage.app",
+  messagingSenderId: "1037713153475",
+  appId: "1:1037713153475:web:a85efa17d42457d6c6b176"
+};
+// ============================================================
+
+const FIREBASE_READY = firebaseConfig.apiKey && !firebaseConfig.apiKey.includes('ВСТАВЬТЕ');
+let db = null;
+let isOnline = false;
+let localMode = false;
+
+if (FIREBASE_READY) {
+  try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+    isOnline = true;
+  } catch(e) {
+    console.error('Firebase init error', e);
+    localMode = true;
+  }
+} else {
+  localMode = true;
+  document.getElementById('localBanner').classList.add('show');
+}
+
+const defaultEmployees = [
+  { id: 'emp1', name: 'Кармазиков Константин', surname: 'Кармазиков', position: 'Зав. постановочной частью' },
+  { id: 'emp2', name: 'Тузова Наталья',        surname: 'Тузова',     position: 'Начальник осветительного цеха' },
+  { id: 'emp3', name: 'Родавичюс Павел',       surname: 'Родавичюс',  position: 'Осветитель' },
+  { id: 'emp4', name: 'Николаев Илья',         surname: 'Николаев',   position: 'Начальник звукоцеха' },
+  { id: 'emp5', name: 'Новиков Павел',         surname: 'Новиков',    position: 'Звукоинженер' },
+  { id: 'emp6', name: 'Шанин Александр',       surname: 'Шанин',      position: 'Помощник режиссёра' },
+  { id: 'emp7', name: 'Иванов Роман',          surname: 'Иванов',     position: 'Рабочий сцены' },
+  { id: 'emp8', name: 'Москвин Дмитрий',       surname: 'Москвин',    position: 'Рабочий сцены' },
+  { id: 'emp9', name: 'Майоров Константин',    surname: 'Майоров',    position: 'Рабочий сцены' },
+];
+
+const mayEvents = [
+  { id: 'e1',  date: '2026-05-02', title: 'Распев', location: 'Алексеич', producer: 'Яснюк Ксюша', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '' },
+  { id: 'e2',  date: '2026-05-03', title: 'Лекция: Архив x Кино', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e3',  date: '2026-05-06', title: 'АУДИОЗАПИСЬ лекции с муз. сопр.', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Николаев Илья', light: '', video: '', direction: '', budgetCode: '' },
+  { id: 'e4',  date: '2026-05-09', title: 'ПЛЯС', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: 'Новиков Паша', light: '', video: '', direction: '', budgetCode: '6.2.1 (премия)' },
+  { id: 'e5',  date: '2026-05-10', title: 'Бикапо', location: 'Зал', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e6',  date: '2026-05-16', title: 'Распев', location: 'Алексеич', producer: 'Яснюк Ксюша', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '' },
+  { id: 'e7',  date: '2026-05-17', title: 'Ридинг и воркшоп "Камнем на сердце"', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: '', light: '', video: '', direction: '', budgetCode: '' },
+  { id: 'e8',  date: '2026-05-17', title: 'Мастер-класс: ЛЭЗ', location: 'ЛЭЗ', producer: 'Белянина Арина', responsible: 'Кармазиков Костя', sound: '', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e9',  date: '2026-05-19', title: 'Показ видеоэссе + обсуждение', location: 'Зал', producer: 'Устинова Катя', responsible: 'Бондаренко Леша', sound: 'Николаев Илья', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: '', budgetCode: '6.2.1' },
+  { id: 'e10', date: '2026-05-21', title: 'Кинопоказ', location: 'Зал', producer: 'Устинова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: '', budgetCode: '6.2.1' },
+  { id: 'e11', date: '2026-05-22', title: 'Кинопоказ и лекция Александра Зубковского', location: 'Зал', producer: 'Саламатов Рома', responsible: 'Тузова Наташа', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: 'Шушерин Антон', direction: 'Шанин Саша', budgetCode: '' },
+  { id: 'e12', date: '2026-05-23', title: 'Книжный клуб', location: 'Лекторий', producer: 'Третьякова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e13', date: '2026-05-24', title: 'Лекция "Кладбища и городская жизнь...", 14:00', location: 'Лекторий', producer: 'Саламатов Рома', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e14', date: '2026-05-24', title: '137. Сны между страстью и смертью', location: 'Зал', producer: 'Третьякова Катя', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: 'Павлов Максим', budgetCode: '' },
+  { id: 'e15', date: '2026-05-25', title: 'Танц. паблик-ток + джем: Ольга Цветкова', location: 'Зал', producer: 'Сычева Алиса', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '6.2.1' },
+  { id: 'e16', date: '2026-05-27', title: 'Концерт / Старинная музыка // Бах', location: 'Зал', producer: 'Абашева Софья', responsible: 'Кармазиков Костя', sound: 'Новиков Паша', light: 'Тузова Н., Родавичюс П.', video: '', direction: 'Шанин Саша', budgetCode: '6.3.1' },
+  { id: 'e17', date: '2026-05-30', title: 'Танц. майндмэп (+ лестница)', location: 'Алексеич', producer: 'Сычева Алиса', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Тузова Н., Родавичюс П.', video: '', direction: '', budgetCode: '6.2.1' },
+  { id: 'e18', date: '2026-05-30', title: 'ПЛЯС', location: 'Зал', producer: 'Устинова Катя', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Тузова Н., Родавичюс П.', video: '', direction: '', budgetCode: '' },
+  { id: 'e19', date: '2026-05-30', title: 'Распев (завершение сезона)', location: 'Лекторий', producer: 'Яснюк Ксюша', responsible: 'Тузова Наташа', sound: 'Николаев Илья', light: 'Родавичюс Паша', video: '', direction: '', budgetCode: '' },
+  { id: 'e20', date: '2026-05-30', title: 'Воркшоп: кинонаправление', location: 'ЛЭЗ', producer: 'Устинова Катя', responsible: 'Тузова Наташа', sound: '', light: '', video: '', direction: '', budgetCode: '' },
+  { id: 'e21', date: '2026-05-31', title: 'Танц. майндмэп', location: 'Алексеич', producer: 'Сычева Алиса', responsible: 'Кармазиков Костя (БЕЗ присутствия)', sound: '', light: '', video: '', direction: '', budgetCode: '6.2.1' },
+];
+
+const compactEventsText = `
+# СЕЗОН 2026/27
+2026-08-31|Репетиция MA-Dance 11:00-18:00|Зал
+2026-08-31|Город как звук (А39, Москва) — гастроли до 06.09|Москва
+2026-09-01|Репетиция MA-Dance 11:00-18:00|Зал
+2026-09-01|Город как звук (А39, Москва)|Москва
+2026-09-02|Репетиция MA-Dance 11:00-18:00|Зал
+2026-09-02|Город как звук (А39, Москва)|Москва
+2026-09-03|Репетиция MA-Dance 11:00-18:00|Зал
+2026-09-03|Город как звук (А39, Москва)|Москва
+2026-09-04|Тех. пробы для концерта Sonorum (12:00-18:00)|Зал
+2026-09-04|Репетиция: Камерный концерт «Внутренний голос» (19:45-22:15)|Зал
+2026-09-05|Artist talk к камерному концерту (19:00)|Зал
+2026-09-05|Камерный концерт «Внутренний голос» (20:00)|Зал
+2026-09-06|БИКАПО (регистрация с 20:00)|Зал
+2026-09-07|Гастроли: Землетрясение (Тузова, Николаев, Шанин, Иванов) до 13.09|Гастроли
+2026-09-10|Репетиция: Запись Голль/Архипов|Зал
+2026-09-10|Камерный концерт Стас Михайловский — Репетиция|Зал
+2026-09-11|Запись Голль/Архипов|Зал
+2026-09-12|Камерный концерт Стас Михайловский — Репетиция|Зал
+2026-09-14|Кинопоказ х Театр HD — Тех.репетиция (16:00)|Зал
+2026-09-16|Камерный концерт Стас Михайловский, флейта (20:00)|Зал
+2026-09-17|Монтаж света|Зал
+2026-09-18|Репетиция «Песни Теодора к вечеринке 19.09» (17:00-19:20)|Зал
+2026-09-19|ПЛЯС + ЛСЗ (11:00-12:30)|Зал
+2026-09-19|ПЛЯС + ЛСЗ 60+ (13:00-14:30)|Зал
+2026-09-19|Мастер-класс Жоржа Бартеля (14:00-17:00)|Лекторий
+2026-09-19|Кинопоказ х Театр HD «Кармен» (18:00)|Зал
+2026-09-19|Лаборатория современного зрителя. Воркшоп по французскому языку (20:00)|Зал
+2026-09-19|Закрытая вечеринка для друзей Теодора (23:00)|Зал
+2026-09-22|Монтаж Mader Nort (инсталляция с ковром)|Хранилище
+2026-09-23|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-09-23|Монтаж Mader Nort|Хранилище
+2026-09-24|Монтаж Mader Nort|Хранилище
+2026-09-25|Выставка Mader Nort (12:00-22:00)|Хранилище
+2026-09-25|Монтаж света mA Dance|Зал
+2026-09-26|Выставка Mader Nort (12:00-22:00)|Хранилище
+2026-09-26|ПЛЯС (11:00-12:30)|Зал
+2026-09-26|ПЛЯС 60+ (13:00-14:30)|Зал
+2026-09-26|Репетиция mA Dance lumen et umbra|Зал
+2026-09-26|mA Dance lumen et umbra (20:00)|Зал
+2026-09-27|Выставка Mader Nort (12:00-18:30)|Хранилище
+2026-09-27|Репетиция mA Dance lumen et umbra|Зал
+2026-09-28|Демонтаж Mader Nort|Хранилище
+2026-09-28|mA Dance lumen et umbra|Зал
+2026-09-28|Запись ударных для произведения Теодора (10:00-20:00)|ТТЦ Чапыгина
+2026-09-29|Кастинг в МА Дэнс (13:00-20:00)|Зал
+2026-09-30|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-09-30|Кастинг в МА Дэнс (13:00-20:00)|Зал
+2026-10-01|Кинопоказ закрытый Noir Films (20:00)|Зал
+2026-10-02|Лаборатория современного зрителя. Онлайн-лекция Ляли Кандауровой (20:00-21:30)|Зал
+2026-10-02|ЛЭЗ decode silence — инструктаж (19:30-21:30)|ЛЭЗ 103
+2026-10-03|ПЛЯС (11:00-12:30)|Хранилище
+2026-10-03|ПЛЯС 60+ (13:00-14:30)|Хранилище
+2026-10-03|РАСПЕВ (13:00-15:00)|Лекторий
+2026-10-03|Камерный концерт «Шостакович» — Репетиция (15:00)|Зал
+2026-10-03|ЛЭЗ decode silence — выход в город (16:00-18:00)|Город
+2026-10-03|«Слушаем Моцарта» с Евой Геворгян (15:30-17:00)|Хранилище
+2026-10-03|ПОВТОР ПРОГРАММЫ 19.09 (20:30)|Зал
+2026-10-04|Камерный концерт «Шостакович» к 120-летию (20:00)|Зал
+2026-10-04|ЛЭЗ decode silence — выход в город (16:00-18:00)|Город
+2026-10-06|Репетиция Just Ensemble (15:00-22:00)|Зал
+2026-10-07|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-10-07|Репетиция Just Ensemble (15:00-22:00)|Зал
+2026-10-08|Лекция «Семь покрывал Катерины Измайловой» (20:00)|Хранилище
+2026-10-09|Репетиция Just Ensemble (11:00-19:00)|Зал
+2026-10-10|Кинопоказ х Театр HD. Венская опера: Иоланта (17:00)|Зал
+2026-10-11|БИКАПО (регистрация 20:00)|Зал
+2026-10-13|Репетиция концерта хора|Зал
+2026-10-14|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-10-14|Концерт хора (20:00)|Зал
+2026-10-15|«Землетрясение» mA Dance — тех.день|Зал
+2026-10-16|«Землетрясение» mA Dance — реп.день|Зал
+2026-10-17|«Землетрясение» mA Dance — показ (20:00)|Зал
+2026-10-18|«Землетрясение» mA Dance — показ (20:00)|Зал
+2026-10-20|Послание к человеку (19:00)|Зал
+2026-10-20|Монтаж Альма-матер «Стихам здесь не место»|Хранилище
+2026-10-21|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-10-21|Репетиция Альма-матер (12:00-18:00)|Хранилище
+2026-10-21|Альма-матер «Стихам здесь не место» (19:00-21:00)|Хранилище
+2026-10-21|Репетиция к концерту JUST Ensemble (12:00-18:00)|Зал
+2026-10-22|Послание к человеку — Репетиция (15:00)|Зал
+2026-10-22|Послание к человеку — кино под муз. сопровождение (19:00)|Зал
+2026-10-22|ПЛЯС (19:00-21:00)|Лекторий
+2026-10-23|Репетиция + монтаж к концерту JUST Ensemble (12:00-18:00)|Зал
+2026-10-23|«Не только АССА и Сайгон» — лекция Игоря Кузьмичева (20:00)|Хранилище
+2026-10-24|Монтаж / саундчек / репетиция JUST Ensemble & Corps (10:00-19:00)|Зал
+2026-10-24|РАСПЕВ (13:00-15:00)|Хранилище
+2026-10-24|Концерт Just Ensemble & Corps (20:00)|Зал
+2026-10-25|Фьорд (17:00)|Зал
+2026-10-26|Монтаж света для Дэнс + репетиция|Зал
+2026-10-26|Запись хора для Кантаты (Одоевского 24)|Одоевского 24
+2026-10-27|mA Dance & Friends (free)|Зал
+2026-10-27|Запись хора для Кантаты (Одоевского 24)|Одоевского 24
+2026-10-28|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-10-28|Камерный концерт. Музыка для арфы и виолончели — Репетиция (14:00-22:00)|Зал
+2026-10-28|Открытая встреча с композитором Юрием Красавиным (20:00)|Хранилище
+2026-10-29|ПЛЯС (19:00-21:00)|Лекторий
+2026-10-29|Камерный концерт. Музыка для арфы и виолончели (20:00)|Зал
+2026-10-30|ПЛЯС (16:45-18:45)|Хранилище
+2026-10-30|Концерт Сонорум (20:00)|Зал
+2026-10-31|ПЛЯС (11:00-12:30)|Зал
+2026-10-31|ПЛЯС 60+ (13:00-14:30)|Зал
+2026-10-31|Тех.день Альма матер (15:00)|Зал
+2026-10-31|Монтаж Запись Голль / Мустукис (до 15:00)|Зал
+2026-10-31|Лаборатория «Шостакович в диалогах — I» (19:00)|Зал
+2026-11-01|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий
+2026-11-02|Запись Голль / Мустукис (весь день)|Зал
+2026-11-03|Монтаж выставки ЛЭЗ|Хранилище
+2026-11-03|Репетиции Альма-матер|Зал
+2026-11-04|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-11-04|Альма-матер. Спектакли лаборатории «Ода дню», «Дедушка.Встреча»|Зал
+2026-11-05|Хор репетиция (17:30)|Зал
+2026-11-05|Театральная встреча Алексеич (19:00-21:00)|Алексеич
+2026-11-05|ПЛЯС (19:00-21:00)|Лекторий
+2026-11-05|Монтаж света весь день|Зал
+2026-11-06|Прогон концерта хора (17:30-19:15)|Зал
+2026-11-06|Концерт хора MA. Русская духовная музыка XX века (20:00)|Зал
+2026-11-07|ПЛЯС (13:00-14:30)|Зал
+2026-11-07|РАСПЕВ (13:00-15:00)|Лекторий
+2026-11-07|Мастер-класс Софии Георгиу (15:00-17:00)|Лекторий
+2026-11-07|«Превратности судьбы Сергея Довлатова» (18:00)|Лекторий
+2026-11-07|«Ночь» — Репетиция к 15.11 (18:30)|Зал
+2026-11-08|Дягилев P.S.|Зал
+2026-11-08|ПЛЯС 60+ (15:00-16:30)|Зал
+2026-11-08|M shorts: лучший российский короткий метр (18:00)|Зал
+2026-11-09|Лаборатория «Шостакович в диалогах — II» (19:00)|Зал
+2026-11-10|Монтаж выставки ЛЭЗ|Хранилище
+2026-11-10|ЛЭЗ Запись трансляции радио KURS (12:00-20:00)|Зал
+2026-11-10|ПЛЯС (19:00-21:00)|Лекторий
+2026-11-11|Выставка ЛЭЗ|Хранилище
+2026-11-11|ЛЭЗ Курс. Синтез звука в Max (ОНЛАЙН 19:30-21:30)|Онлайн
+2026-11-11|Кинопоказ х Театр HD. Роберт Уилсон: Красота — в загадке (19:00)|Зал
+2026-11-12|Выставка ЛЭЗ — Открытие для прессы (18:00-20:00)|Хранилище
+2026-11-13|Николай Метнер — РЕПЕТИЦИЯ (с 12:00)|Зал
+2026-11-13|Лекция-концерт к 75-летию Метнера (20:00)|Зал
+2026-11-14|ПЛЯС (11:00-12:30)|Лекторий
+2026-11-14|ПЛЯС 60+ (13:00-14:30)|Лекторий
+2026-11-14|Концерт-открытие выставки ЛЭЗ: Электричество (20:00)|Зал
+2026-11-15|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-11-15|Дягилев P.S. (12:00-15:00)|Зал
+2026-11-15|«Ночь». Концерт солистов хора musicAeterna (19:00)|Зал
+2026-11-15|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий
+2026-11-16|Тех.день «Почему нет?» mA Dance|Зал
+2026-11-17|Репетиция «Почему нет?» mA Dance|Зал
+2026-11-18|Репетиция «Почему нет?» mA Dance|Зал
+2026-11-19|Репетиция «Почему нет?» mA Dance|Зал
+2026-11-19|Медиация. Выставка ЛЭЗ: Электричество (20:30-22:00)|Хранилище
+2026-11-20|Репетиция «Почему нет?» mA Dance|Зал
+2026-11-20|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-11-20|«Бах из окрестностей пожарного депо»: Сергей Танеев (20:00)|Лекторий
+2026-11-21|«Почему нет?» mA Dance — премьера|Зал
+2026-11-22|«Почему нет?» mA Dance — премьера|Зал
+2026-11-22|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-11-23|Запись Голль / Мустукис (весь день)|Зал
+2026-11-24|Лаборатория современного зрителя. «Шенберг и Штраус» (19:00)|Зал
+2026-11-25|Лаборатория современного зрителя. Творческая встреча с Ф. Безносиковым (19:00)|Зал
+2026-11-26|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-11-26|Малика (19:00)|Зал
+2026-11-26|Репетиция «Стыд» mA Dance|Зал
+2026-11-27|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-11-27|Рояль как звуковой объект — Репетиция (с 12:00)|Зал
+2026-11-28|РАСПЕВ (13:00-15:00)|Лекторий
+2026-11-28|Академия Рубинштейна — Монтаж света до 17:00|Зал
+2026-11-28|ЛЭЗ. Мастер-класс «Дроун синтезатор» (14:00)|ЛЭЗ 103
+2026-11-28|«Стыд» mA Dance — показ (20:00)|Зал
+2026-11-29|Концерт «Возможно мы». Академия Рубинштейна (19:00)|Зал
+2026-11-29|ЛЭЗ. Мастер-класс «Circuit bent эхо-процессор» (14:00)|ЛЭЗ 103
+2026-11-30|Концерт «Возможно мы». Академия Рубинштейна (19:00)|Зал
+2026-11-30|ПЛЯС (18:30-20:00)|Лекторий
+2026-11-30|ПЛЯС (20:30-22:00)|Лекторий
+2026-12-01|Репетиция концерта Кирилла Архипова|Зал
+2026-12-01|Театральная встреча Алексеич (19:00-21:00)|Алексеич
+2026-12-02|Репетиция концерта Кирилла Архипова|Зал
+2026-12-02|Прошуттерия x Дом Радио (19:00-23:00)|Дом Радио
+2026-12-03|Концерт Кирилла Архипова Distorted (19:00-20:00)|Зал
+2026-12-03|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-03|Закрытый концерт ГАЗПРОМ. Барочная программа|Зал
+2026-12-03|Репетиция концерта Кирилла Архипова|Зал
+2026-12-03|ПЛЯС (19:00-21:00)|Лекторий
+2026-12-04|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-12-05|ПЛЯС (11:00-12:30)|Лекторий
+2026-12-05|ПЛЯС 60+ (13:00-14:30)|Лекторий
+2026-12-05|ЛЭЗ Концерт БИСК X (20:00)|Зал
+2026-12-06|БИКАПО (20:00)|Зал
+2026-12-06|«Ленинградские денди» (18:00)|Лекторий
+2026-12-06|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-06|Лаборатория Норникель (весь день)|Репетитории 3 эт.
+2026-12-07|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории
+2026-12-08|Камерный концерт — Репетиция (17:00)|Зал
+2026-12-08|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории
+2026-12-09|Камерный концерт. Бетховен: 13 квартет и Große Fugue (20:00)|Зал
+2026-12-09|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории
+2026-12-10|Кинособытие. Лекция (19:00)|Зал
+2026-12-10|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории
+2026-12-10|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-11|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-12-11|Лаборатория оркестрового мастерства (весь день)|Лекторий/Репетитории
+2026-12-11|«Духовная эволюция Джона Колтрейна» — перформанс и лекция (12:00-20:00)|Зал
+2026-12-11|Камерный концерт. Андреас + пианист (20:00, tbc)|Зал
+2026-12-12|Лаборатория оркестрового мастерства — Итоговый концерт (16:00)|Зал
+2026-12-12|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-13|Кинопоказ х Театр HD. Роберт Уилсон: Орфей и Эвридика (18:00)|Зал
+2026-12-13|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий/Зал
+2026-12-15|«Любить». Лаборатория современного танца — Репетиция (12:00-20:00)|Зал
+2026-12-15|«Любовь как маленькая смерть» — лекция Виты Хлоповой (20:00)|Зал
+2026-12-16|«Любить» — Репетиция (12:00-20:00)|Зал
+2026-12-17|«Любить» — Репетиция (12:00-20:00)|Зал
+2026-12-17|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-18|«Любить» — Репетиция (12:00-20:00)|Зал
+2026-12-18|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-12-19|«Любить» — Показ лаборатории (12:00-20:00)|Зал/Лекторий
+2026-12-19|«Любить» — Показ (20:00)|Зал
+2026-12-19|ЛЭЗ. Мастер-класс «Карплус-Стронг синтезатор» (14:00)|ЛЭЗ 103
+2026-12-20|«Нераздельно и неслиянно: искусство контрапункта» — лекция Ляли Кандауровой (18:00)|Лекторий
+2026-12-20|Концерт Большого Распева (20:00)|Зал
+2026-12-20|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-22|«Реставрация Дома Радио» — лекция Марии Шапченко (19:00)|Лекторий
+2026-12-23|Борис Юхананов, часть 1 (19:00)|Зал
+2026-12-24|Борис Юхананов, часть 2 (19:00)|Зал
+2026-12-24|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-25|ЛЭЗ Курс. Модульный синтез (19:30-21:30)|ЛЭЗ 103
+2026-12-25|МУЗЫКАЛЬНО-ПОЭТИЧЕСКИЙ ПЕРФОРМАНС «ОРКиКО» (20:00)|Зал
+2026-12-26|Концерт «Хор и Серебряный век: Музыкальные миры Дмитрия Смирнова» (20:00)|Зал
+2026-12-26|РАСПЕВ (13:00-15:00)|Лекторий
+2026-12-27|ПЛЯС (11:00-12:30)|Зал
+2026-12-27|ПЛЯС 60+ (13:00-14:30)|Зал
+2026-12-27|«Новый 1927-й: истории из дома на краю города» — лекция Даниэля Лурье (18:00)|Лекторий
+2026-12-27|ИГРЫ. Перформативная лаборатория (11:00-18:00)|Лекторий/Зал
+2026-12-27|Медиация. Выставка ЛЭЗ (20:30-22:00)|Хранилище
+2026-12-28|ПЛЯС (19:00-21:00)|Лекторий
+2026-12-29|Новый год|Зал
+2027-01-10|Распев (13:00-14:30)|Хранилище
+2027-01-11|Молодежный оркестр (12:00-15:00)|Хранилище
+2027-01-12|Концерт Алексея Ретинского|Зал
+2027-01-13|Концерт Алексея Ретинского|Зал
+2027-01-14|Концерт Алексея Ретинского|Зал
+2027-01-15|Концерт Алексея Ретинского (tickets)|Зал
+2027-01-16|Лекция Александра Андрияшкина (19:30)|Лекторий
+2027-01-16|Рециталы. Анна Комарова, флейта — Репетиция|Зал
+2027-01-17|Воркшоп Александра Андрияшкина|Лекторий
+2027-01-17|Рециталы. Анна Комарова, флейта (20:00)|Зал
+2027-01-17|БИКАПО (20:00)|Зал
+2027-01-17|АЛЬМАМАТЕР. Лекция ТБС. Разговоры|Лекторий
+2027-01-18|Молодежный оркестр (12:00-15:00)|Хранилище
+2027-01-19|Парфюмерный ужин (тбс)|Зал
+2027-01-20|Иранское кино. Лекция (19:00)|Лекторий
+2027-01-21|Репетиция. Концерт Кирилла Архипова «Обрыв ли овраг ли цветочный луг»|Зал
+2027-01-22|Репетиция. Концерт Кирилла Архипова|Зал
+2027-01-22|Концерт Кирилла Архипова «Обрыв ли овраг ли цветочный луг» (20:00)|Зал
+2027-01-23|Распев (13:00-14:30)|Большой зал
+2027-01-23|ЛОСН. Встреча к концерту|Зал
+2027-01-24|Рок-концерт Life on Venus (время tbc)|Зал
+2027-01-25|Молодежный оркестр (12:00-15:00)|Хранилище
+2027-01-26|Иранское кино. Кинопоказ (19:00)|Зал
+2027-01-27|Репетиции Хор mA (И. Горин)|Зал
+2027-01-28|Репетиции Хор mA (А. Немзер, И. Горин) — до 18:00|Зал
+2027-01-29|Моноспектакль Лизы Боярской «137. Сны о страсти и смерти» (20:00)|Зал
+2027-01-30|Концерт Хор mA: Duo Seraphim — Репетиция (не раньше 15:00)|Зал
+2027-01-30|Фотовыставка хора (19:00)|Алексеич/Хранилище
+2027-01-31|Концерт Хор mA: Duo Seraphim (20:00)|Зал
+2027-01-31|Фотовыставка хора (19:00)|Алексеич/Хранилище
+2027-01-31|Молодежный оркестр (12:00-15:00)|Хранилище
+`;
+
+function parseCompactEvents(text) {
+  const lines = text.trim().split('\n');
+  const result = [];
+  let idx = 0;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const parts = trimmed.split('|');
+    if (parts.length < 2) continue;
+    result.push({
+      id: 'p_' + (idx++),
+      date: parts[0],
+      title: parts[1],
+      location: parts[2] || '',
+      producer: '', responsible: '', sound: '', light: '', video: '', direction: '', budgetCode: ''
+    });
+  }
+  return result;
+}
+
+let state = { employees: [], events: [], hours: {} };
+let currentMonth = null;
+let currentEventId = null;
+let suppressRender = false;
+
+function formatMonth(m) {
+  const [y, mo] = m.split('-');
+  const n = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  return n[parseInt(mo)-1] + ' ' + y;
+}
+function formatDate(d) { const [y,m,day] = d.split('-'); return day+'.'+m+'.'+y; }
+function getMonths() { return [...new Set(state.events.map(e => e.date.slice(0,7)))].sort(); }
+function getMonthEvents() { return state.events.filter(e => e.date.startsWith(currentMonth)).sort((a,b) => a.date.localeCompare(b.date) || a.title.localeCompare(b.title)); }
+function escapeHtml(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function round1(n) { return Math.round(n*10)/10; }
+function uid(prefix) { return (prefix||'id') + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+
+async function initData() {
+  if (!isOnline) {
+    try {
+      const raw = localStorage.getItem('overtime_local_v4');
+      if (raw) { state = JSON.parse(raw); return; }
+    } catch(e) {}
+    state = {
+      employees: defaultEmployees.map(x => ({...x})),
+      events: [...mayEvents.map(x => ({...x})), ...parseCompactEvents(compactEventsText)],
+      hours: {}
+    };
+    saveLocal();
+    return;
+  }
+  const metaSnap = await db.ref('meta/initialized').once('value');
+  if (!metaSnap.val()) {
+    const emps = {}; defaultEmployees.forEach(e => emps[e.id] = e);
+    const evs = {};
+    [...mayEvents, ...parseCompactEvents(compactEventsText)].forEach(e => evs[e.id] = e);
+    await db.ref('employees').set(emps);
+    await db.ref('events').set(evs);
+    await db.ref('meta/initialized').set(true);
+  }
+}
+
+function saveLocal() {
+  try { localStorage.setItem('overtime_local_v4', JSON.stringify(state)); } catch(e) {}
+}
+
+function subscribeFirebase() {
+  db.ref('employees').on('value', snap => {
+    const val = snap.val() || {};
+    state.employees = Object.values(val);
+    if (!suppressRender) render();
+  });
+  db.ref('events').on('value', snap => {
+    const val = snap.val() || {};
+    state.events = Object.values(val);
+    if (!suppressRender) render();
+  });
+  db.ref('hours').on('value', snap => {
+    state.hours = snap.val() || {};
+    updateHoursInPlace();
+    updateSummary();
+  });
+  const uidKey = localStorage.getItem('presence_uid') || uid('u');
+  localStorage.setItem('presence_uid', uidKey);
+  const pRef = db.ref('presence/' + uidKey);
+  pRef.onDisconnect().remove();
+  pRef.set({ ts: Date.now() });
+  setInterval(() => pRef.set({ ts: Date.now() }), 30000);
+  db.ref('presence').on('value', snap => {
+    const list = Object.values(snap.val() || {}).filter(p => Date.now() - p.ts < 120000);
+    document.getElementById('onlineCount').style.display = list.length ? 'inline-flex' : 'none';
+    document.getElementById('onlineNum').textContent = list.length;
+  });
+}
+
+function setStatus(status, text) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot ' + status;
+  document.getElementById('statusText').textContent = text;
+}
+
+if (isOnline) {
+  setStatus('online', 'Подключение…');
+  db.ref('.info/connected').on('value', snap => {
+    if (snap.val() === true) setStatus('online', 'Подключено');
+    else setStatus('offline', 'Нет соединения');
+  });
+} else {
+  setStatus('local', 'Локальный режим');
+}
+
+function render() {
+  const months = getMonths();
+  if (!months.length) {
+    document.getElementById('monthTabs').innerHTML = '';
+    document.getElementById('eventList').innerHTML = '';
+    document.getElementById('mainPanel').innerHTML = '<div class="card"><div class="empty">Нет данных. Добавьте мероприятие.</div></div>';
+    return;
+  }
+  if (!currentMonth || !months.includes(currentMonth)) {
+    const today = new Date().toISOString().slice(0,7);
+    currentMonth = months.includes(today) ? today : months[0];
+  }
+  const el = document.getElementById('monthTabs');
+  el.innerHTML = months.map(m => '<button class="month-tab ' + (m===currentMonth?'active':'') + '" data-month="' + m + '">' + formatMonth(m) + '</button>').join('');
+  el.querySelectorAll('.month-tab').forEach(b => b.onclick = () => { currentMonth = b.dataset.month; currentEventId = null; render(); });
+  renderEventList();
+  renderMainPanel();
+}
+
+function renderEventList() {
+  const events = getMonthEvents();
+  const el = document.getElementById('eventList');
+  let html = '<div class="event-item summary-item ' + (currentEventId===null?'active':'') + '" data-id="__summary__">' +
+    '<div class="event-date">Сводка</div><div class="event-title">📊 Итого за ' + formatMonth(currentMonth) + '</div></div>';
+  if (!events.length) html += '<div class="empty">В этом месяце нет мероприятий</div>';
+  else html += events.map(ev => '<div class="event-item ' + (ev.id===currentEventId?'active':'') + '" data-id="' + ev.id + '">' +
+    '<div class="event-date">' + formatDate(ev.date) + '</div>' +
+    '<div class="event-title">' + escapeHtml(ev.title) + '</div></div>').join('');
+  el.innerHTML = html;
+  el.querySelectorAll('.event-item').forEach(item => item.onclick = () => {
+    currentEventId = item.dataset.id === '__summary__' ? null : item.dataset.id;
+    renderEventList(); renderMainPanel();
+  });
+}
+
+function getRoleFor(ev, empSurname) {
+  const fields = [['responsible','Ответственный'],['sound','Звук'],['light','Свет'],['video','Видео'],['direction','Проведение']];
+  for (const [f, label] of fields) if (ev[f] && ev[f].includes(empSurname)) return label;
+  return '';
+}
+
+function renderMainPanel() {
+  const el = document.getElementById('mainPanel');
+  let html = '';
+  if (currentEventId) {
+    const ev = state.events.find(e => e.id === currentEventId);
+    if (ev) html += renderEventCard(ev);
+  }
+  html += renderMonthlySummary();
+  el.innerHTML = html;
+  bindEventInputs();
+}
+
+function renderEventCard(ev) {
+  const hours = state.hours[ev.id] || {};
+  const meta = [];
+  if (ev.location) meta.push('📍 ' + escapeHtml(ev.location));
+  if (ev.producer) meta.push('🎬 ' + escapeHtml(ev.producer));
+  if (ev.budgetCode) meta.push('💰 ' + escapeHtml(ev.budgetCode));
+  const rows = state.employees.map(emp => {
+    const role = getRoleFor(ev, emp.surname || emp.name.split(' ')[0]);
+    const h = hours[emp.id] || '';
+    return '<tr><td>' + escapeHtml(emp.name) + '</td>' +
+      '<td class="position-cell">' + escapeHtml(emp.position || '') + '</td>' +
+      '<td>' + (role ? '<span class="role-badge">' + role + '</span>' : '—') + '</td>' +
+      '<td><input type="number" min="0" step="0.5" value="' + h + '" data-emp="' + emp.id + '" data-ev="' + ev.id + '" placeholder="0"></td></tr>';
+  }).join('');
+  return '<div class="card"><div class="toolbar" style="margin-bottom:8px;"><h2>' + escapeHtml(ev.title) + '</h2>' +
+    '<div><button onclick="openEventDialog(\'' + ev.id + '\')">✎ Редактировать</button> <button onclick="deleteEvent(\'' + ev.id + '\')">🗑</button></div></div>' +
+    '<div class="meta"><span>📅 ' + formatDate(ev.date) + '</span>' + meta.map(m => '<span>' + m + '</span>').join('') + '</div>' +
+    '<table><thead><tr><th>Сотрудник</th><th>Должность</th><th>Роль</th><th>Часы</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+    '<div class="event-total-bar">Итого за мероприятие: <strong id="eventTotal">' + calcEventTotal(ev.id) + ' ч</strong></div></div>';
+}
+function calcEventTotal(evId) { const h = state.hours[evId] || {}; return round1(Object.values(h).reduce((s,v) => s + (Number(v)||0), 0)); }
+
+function bindEventInputs() {
+  document.querySelectorAll('input[data-emp]').forEach(inp => {
+    inp.oninput = () => {
+      const evId = inp.dataset.ev, empId = inp.dataset.emp, val = parseFloat(inp.value);
+      if (!state.hours[evId]) state.hours[evId] = {};
+      if (val && val > 0) state.hours[evId][empId] = val; else delete state.hours[evId][empId];
+      if (isOnline) {
+        db.ref('hours/' + evId + '/' + empId).set(val && val > 0 ? val : null);
+      } else {
+        saveLocal();
+        const tot = document.getElementById('eventTotal');
+        if (tot) tot.textContent = calcEventTotal(evId) + ' ч';
+        updateSummary();
+      }
+    };
+  });
+}
+
+function updateHoursInPlace() {
+  document.querySelectorAll('input[data-emp]').forEach(inp => {
+    if (document.activeElement === inp) return;
+    const evId = inp.dataset.ev, empId = inp.dataset.emp;
+    const val = state.hours[evId]?.[empId] || '';
+    if (String(inp.value) !== String(val)) inp.value = val;
+  });
+  const tot = document.getElementById('eventTotal');
+  if (tot && currentEventId) tot.textContent = calcEventTotal(currentEventId) + ' ч';
+}
+
+function renderMonthlySummary() {
+  const events = getMonthEvents();
+  const dates = [...new Set(events.map(e => e.date))].sort();
+  const rows = state.employees.map(emp => {
+    let totalHours = 0, overtime = 0, workDays = 0;
+    for (const date of dates) {
+      let dayTotal = 0;
+      for (const ev of events) if (ev.date === date) dayTotal += (Number(state.hours[ev.id]?.[emp.id]) || 0);
+      if (dayTotal > 0) workDays++;
+      totalHours += dayTotal;
+      if (dayTotal > 8) overtime += dayTotal - 8;
+    }
+    return { name: emp.name, position: emp.position || '', totalHours: round1(totalHours), workDays, overtime: round1(overtime) };
+  });
+  const totalAll = round1(rows.reduce((s,r) => s + r.totalHours, 0));
+  const totalOt = round1(rows.reduce((s,r) => s + r.overtime, 0));
+  return '<div class="card" id="summary"><h2>Итого за ' + formatMonth(currentMonth) + '</h2>' +
+    '<p class="hint">Норма — 8 часов в день. Переработка = часы сверх 8 за день (суммируются все мероприятия дня).</p>' +
+    '<table><thead><tr><th>Сотрудник</th><th>Должность</th><th>Рабочих дней</th><th>Всего часов</th><th>Переработка</th></tr></thead><tbody>' +
+    rows.map(r => '<tr><td>' + escapeHtml(r.name) + '</td><td class="position-cell">' + escapeHtml(r.position) + '</td>' +
+      '<td>' + (r.workDays||'—') + '</td><td>' + (r.totalHours||'—') + '</td>' +
+      '<td class="' + (r.overtime>0?'overtime':'') + '">' + (r.overtime>0?r.overtime:'—') + '</td></tr>').join('') +
+    '</tbody><tfoot><tr><td>Итого</td><td></td><td></td><td>' + totalAll + '</td><td class="' + (totalOt>0?'overtime':'') + '">' + (totalOt||'—') + '</td></tr></tfoot></table></div>';
+}
+
+function updateSummary() {
+  const old = document.getElementById('summary');
+  if (!old) return;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = renderMonthlySummary();
+  old.replaceWith(tmp.firstElementChild);
+}
+
+function openEmployeeSettings() { renderEmployeeDialog(); document.getElementById('employeeDialog').showModal(); }
+function renderEmployeeDialog() {
+  const el = document.getElementById('employeeList');
+  if (!state.employees.length) { el.innerHTML = '<div class="empty">Нет сотрудников</div>'; return; }
+  el.innerHTML = state.employees.map(emp => '<div class="employee-row">' +
+    '<span class="emp-name">' + escapeHtml(emp.name) + '</span>' +
+    '<span class="emp-pos">' + escapeHtml(emp.position || '—') + '</span>' +
+    '<button onclick="deleteEmployee(\'' + emp.id + '\')">Удалить</button></div>').join('');
+}
+function addEmployee() {
+  const nameInp = document.getElementById('newEmployeeName');
+  const posInp = document.getElementById('newEmployeePosition');
+  const name = nameInp.value.trim(); if (!name) return;
+  const emp = { id: uid('emp'), name, surname: name.split(' ')[0], position: posInp.value.trim() };
+  if (isOnline) db.ref('employees/' + emp.id).set(emp);
+  else { state.employees.push(emp); saveLocal(); renderEmployeeDialog(); renderMainPanel(); }
+  nameInp.value = ''; posInp.value = '';
+}
+function deleteEmployee(id) {
+  if (!confirm('Удалить сотрудника?')) return;
+  if (isOnline) db.ref('employees/' + id).remove();
+  else { state.employees = state.employees.filter(e => e.id !== id); saveLocal(); renderEmployeeDialog(); renderMainPanel(); }
+}
+
+function openEventDialog(editId) {
+  const dlg = document.getElementById('eventDialog');
+  const h3 = dlg.querySelector('h3');
+  if (editId) {
+    const ev = state.events.find(e => e.id === editId); if (!ev) return;
+    h3.textContent = 'Редактировать мероприятие'; dlg.dataset.editId = editId;
+    document.getElementById('newEventDate').value = ev.date;
+    document.getElementById('newEventTitle').value = ev.title;
+    document.getElementById('newEventLocation').value = ev.location||'';
+    document.getElementById('newEventProducer').value = ev.producer||'';
+    document.getElementById('newEventResponsible').value = ev.responsible||'';
+    document.getElementById('newEventSound').value = ev.sound||'';
+    document.getElementById('newEventLight').value = ev.light||'';
+    document.getElementById('newEventVideo').value = ev.video||'';
+    document.getElementById('newEventDirection').value = ev.direction||'';
+    document.getElementById('newEventBudget').value = ev.budgetCode||'';
+  } else {
+    h3.textContent = 'Добавить мероприятие'; delete dlg.dataset.editId;
+    ['newEventDate','newEventTitle','newEventLocation','newEventProducer','newEventResponsible','newEventSound','newEventLight','newEventVideo','newEventDirection','newEventBudget'].forEach(id => document.getElementById(id).value = '');
+  }
+  dlg.showModal();
+}
+function addEvent() {
+  const dlg = document.getElementById('eventDialog');
+  const date = document.getElementById('newEventDate').value;
+  const title = document.getElementById('newEventTitle').value.trim();
+  if (!date || !title) { alert('Укажите дату и название'); return; }
+  const data = {
+    date, title,
+    location: document.getElementById('newEventLocation').value.trim(),
+    producer: document.getElementById('newEventProducer').value.trim(),
+    responsible: document.getElementById('newEventResponsible').value.trim(),
+    sound: document.getElementById('newEventSound').value.trim(),
+    light: document.getElementById('newEventLight').value.trim(),
+    video: document.getElementById('newEventVideo').value.trim(),
+    direction: document.getElementById('newEventDirection').value.trim(),
+    budgetCode: document.getElementById('newEventBudget').value.trim(),
+  };
+  if (dlg.dataset.editId) {
+    const id = dlg.dataset.editId;
+    const ev = state.events.find(e => e.id === id);
+    if (ev) Object.assign(ev, data);
+    if (isOnline) db.ref('events/' + id).set({ ...ev, ...data });
+    else { saveLocal(); render(); }
+  } else {
+    const id = uid('ev');
+    const ev = { id, ...data };
+    if (isOnline) db.ref('events/' + id).set(ev);
+    else { state.events.push(ev); saveLocal(); }
+    currentMonth = date.slice(0,7); currentEventId = null;
+    if (!isOnline) render();
+  }
+  dlg.close();
+}
+function deleteEvent(id) {
+  if (!confirm('Удалить мероприятие и все введённые часы?')) return;
+  if (isOnline) { db.ref('events/' + id).remove(); db.ref('hours/' + id).remove(); }
+  else { state.events = state.events.filter(e => e.id !== id); delete state.hours[id]; saveLocal(); render(); }
+  if (currentEventId === id) currentEventId = null;
+}
+
+function exportCSV() {
+  const events = getMonthEvents();
+  const dates = [...new Set(events.map(e => e.date))].sort();
+  const lines = ['Сотрудник;Должность;Рабочих дней;Всего часов;Переработка'];
+  for (const emp of state.employees) {
+    let total = 0, ot = 0, days = 0;
+    for (const date of dates) {
+      let d = 0; for (const ev of events) if (ev.date === date) d += (Number(state.hours[ev.id]?.[emp.id])||0);
+      if (d > 0) days++; total += d; if (d > 8) ot += d - 8;
+    }
+    if (total > 0) lines.push([emp.name, emp.position||'', days, round1(total), round1(ot)].join(';'));
+  }
+  download('\uFEFF' + lines.join('\n'), 'pererabotki_' + currentMonth + '.csv', 'text/csv;charset=utf-8');
+}
+function download(content, filename, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function showShareInfo() {
+  document.getElementById('shareUrl').value = window.location.href;
+  document.getElementById('shareDialog').showModal();
+}
+function copyShareUrl() {
+  const inp = document.getElementById('shareUrl');
+  inp.select(); document.execCommand('copy');
+  alert('Ссылка скопирована!');
+}
+
+(async function start() {
+  await initData();
+  if (isOnline) subscribeFirebase();
+  render();
+})();
+</script>
 </body>
 </html>
